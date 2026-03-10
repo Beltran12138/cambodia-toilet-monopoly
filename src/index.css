@@ -19,7 +19,7 @@
   body {
     @apply bg-[var(--background)] text-[var(--text-primary)] overflow-x-hidden;
     background-image: 
-      linear-gradient(rgba(255, 140, 0, 0.05) 1px, transparent 1px),
+      linear-gradient(rgba(255,140, 0, 0.05) 1px, transparent 1px),
       linear-gradient(90deg, rgba(255, 140, 0, 0.05) 1px, transparent 1px);
     background-size: 20px 20px;
   }
@@ -29,7 +29,6 @@
     @apply uppercase tracking-wider;
   }
 
-  /* 自定義滾動條 */
   ::-webkit-scrollbar {
     width: 8px;
     height: 8px;
@@ -51,14 +50,14 @@
 @layer components {
   .btn-industrial {
     @apply px-6 py-2 border-2 border-[var(--construction-orange)] text-[var(--construction-orange)] 
-           hover:bg-[var(--construction-orange)] hover:text-black transition-all duration-300
+          hover:bg-[var(--construction-orange)] hover:text-black transition-all duration-300
            font-bold uppercase flex items-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed;
     clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%);
   }
 
   .btn-industrial-blue {
     @apply px-6 py-2 border-2 border-[var(--vital-blue)] text-[var(--vital-blue)] 
-           hover:bg-[var(--vital-blue)] hover:text-black transition-all duration-300
+          hover:bg-[var(--vital-blue)] hover:text-black transition-all duration-300
            font-bold uppercase flex items-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed;
     clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%);
   }
@@ -79,7 +78,6 @@
     }
   }
 
-  /* HP 儀表板 */
   .hp-gauge {
     @apply h-6 bg-gray-800 border-2 border-gray-600 relative overflow-hidden rounded-sm;
     box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);
@@ -106,7 +104,6 @@
     );
     box-shadow: 0 0 10px rgba(220, 20, 60, 0.5);
     
-    /* HP 低時閃爍動畫 */
     @keyframes hp-low-pulse {
       0%, 100% { opacity: 1; }
       50% { opacity: 0.7; }
@@ -117,7 +114,6 @@
     }
   }
 
-  /* 機會卡片彈窗 */
   .chance-card-modal {
     @apply fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-8;
     
@@ -138,7 +134,6 @@
     }
   }
 
-  /* 教程步驟動畫 */
   .tutorial-step {
     @apply transition-all duration-300;
     animation: fade-in-up 0.5s ease-out;
@@ -155,7 +150,6 @@
     }
   }
 
-  /* 影響力儀表板進度條 */
   .impact-progress {
     @apply h-2 bg-gray-800 rounded-full overflow-hidden;
     
@@ -165,7 +159,6 @@
     }
   }
 
-  /* 遊戲格子懸停效果 */
   .board-tile {
     @apply relative flex flex-col items-center justify-between p-2 border-2 transition-all duration-300;
     
@@ -187,7 +180,6 @@
     }
   }
 
-  /* 玩家標記 */
   .player-token {
     @apply w-6 h-6 rounded-full border-2 border-black flex items-center justify-center text-[10px] font-bold shadow-lg;
     transition: all 0.3s ease;
@@ -205,7 +197,6 @@
     }
   }
 
-  /* 廁所建造按鈕 */
   .build-button {
     @apply p-3 border-2 border-[#444] hover:border-[var(--vital-blue)] text-left group transition-all cursor-pointer
            disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:border-[#444];
@@ -219,7 +210,6 @@
     }
   }
 
-  /* 遊戲日誌 */
   .game-log {
     @apply bg-black/50 border-2 border-[#333] p-4 font-mono text-sm overflow-y-auto;
     max-height: 300px;
@@ -233,7 +223,6 @@
     }
   }
 
-  /* 狀態徽章 */
   .status-badge {
     @apply text-[10px] px-2 py-1 font-bold uppercase;
     
@@ -259,27 +248,14 @@
     .btn-industrial {
       @apply text-sm px-4 py-2;
     }
-    
-    /* 平板：调整网格布局 */
-    .grid.grid-cols-12 {
-      grid-template-columns: repeat(12, minmax(0, 1fr));
-      gap: 1.5rem;
-    }
-    
-    /* 棋盘缩小 */
-    .grid.grid-cols-7 {
-      max-width: 100%;
-     aspect-ratio: 1 / 1;
-    }
   }
   
-  /* 平板竖屏和手机横屏 */
   @media (max-width: 768px) {
     body {
       font-size: 14px;
     }
     
-    h1 {
+   h1 {
       font-size: 2.5rem !important;
     }
     
@@ -287,35 +263,15 @@
       @apply flex-col items-center gap-4 text-center mb-6;
     }
     
-    header .flex.justify-between {
-      @apply flex-col gap-4;
-    }
-    
-    /* 单列布局 */
-    .grid.grid-cols-12 {
+    .grid-cols-12 {
       display: block;
     }
     
-    .col-span-12, .xl\:col-span-7, .xl\:col-span-5 {
+    .col-span-12 {
       width: 100%;
     }
     
-    /* 棋盘适配 */
-    .grid.grid-cols-7 {
-      gap: 0.25rem;
-      padding: 0.5rem;
-    }
-    
-    .grid.grid-cols-7 span.text-\[10px\] {
-      font-size: 8px;
-    }
-    
-    .w-6.h-6.rounded-full {
-      @apply w-5 h-5 text-[8px];
-    }
-    
-    /* 按钮堆叠 */
-    .flex.gap-4 {
+    .flex-gap {
       @apply flex-col gap-2;
     }
     
@@ -323,36 +279,8 @@
       width: 100%;
       justify-content: center;
     }
-    
-    /* 统计卡片调整 */
-    .grid.grid-cols-2 {
-      @apply grid-cols-2 gap-2;
-    }
-    
-    .grid.grid-cols-2 > div {
-      @apply p-2;
-    }
-    
-    .text-3xl.font-bold {
-      @apply text-xl;
-    }
-    
-    /* 模态框调整 */
-    .fixed.inset-0.z-50 {
-      @apply p-4;
-    }
-    
-    .panel-brutalist.max-w-md, 
-    .panel-brutalist.max-w-2xl {
-      @apply max-w-full p-6;
-    }
-    
-    .text-6xl, .text-7xl, .text-8xl {
-      @apply text-4xl;
-    }
   }
   
-  /* 手机竖屏优化 */
   @media (max-width: 480px) {
     body {
       padding: 0.5rem;
@@ -367,52 +295,22 @@
       @apply text-base;
     }
     
-    /* 隐藏次要元素 */
-    .game-log {
-      max-height: 150px;
-    }
-    
-    /* 成就通知调整 */
     .achievement-notification {
       @apply min-w-[280px] p-4;
     }
     
-    .achievement-notification .text-xl {
-      @apply text-lg;
-    }
-    
-    /* 玩家标记缩小 */
     .player-token {
-      @apply w-4 h-4 text-[8px];
-    }
-    
-    /* 厕所图标调整 */
-    .text-\[var\(--vital-blue)\].text-2xl,
-    .text-\[var\(--vital-blue)\].text-3xl {
-      @apply text-xl;
+      @apply w-4 h-4 text-xs;
     }
   }
   
-
-  /* 触摸设备优化 */
   @media (hover: none) and (pointer: coarse) {
-    /* 增大触摸区域 */
     button {
       min-height: 44px;
     }
     
-    /* 移除悬停效果，改用点击反馈 */
-    .hover_border_blue:hover {
-      @apply border-[#444];
-    }
-    
-    .hover_scale:hover {
-      transform: none;
-    }
-    
-    /* 确保棋盘格子可点击 */
     .board-tile {
-    touch-action: manipulation;
+     touch-action: manipulation;
     }
   }
 }
@@ -422,7 +320,7 @@
   @apply relative;
   
   &::after {
-  content: attr(data-tooltip);
+   content: attr(data-tooltip);
     @apply absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-black text-white text-xs whitespace-nowrap opacity-0 pointer-events-none transition-opacity;
   }
   
@@ -448,7 +346,7 @@
 /* 玩家移動腳步動畫 */
 @keyframes player-step {
   0%, 100% { transform: translateY(0); }
- 50% { transform: translateY(-5px); }
+  50% { transform: translateY(-5px); }
 }
 
 .player-moving {
@@ -458,8 +356,8 @@
 /* 建造廁所動畫 */
 @keyframes hammer-swing {
   0%, 100% { transform: rotate(0deg); }
- 30% { transform: rotate(-45deg); }
- 60% { transform: rotate(45deg); }
+  30% { transform: rotate(-45deg); }
+  60% { transform: rotate(45deg); }
 }
 
 .hammer-animating {
@@ -468,12 +366,12 @@
 
 @keyframes toilet-build {
   0% { transform: scale(0) rotate(-180deg); opacity: 0; }
-  70% { transform: scale(1.2) rotate(10deg); opacity: 0.8; }
+ 70% { transform: scale(1.2) rotate(10deg); opacity: 0.8; }
   100% { transform: scale(1) rotate(0deg); opacity: 1; }
 }
 
 .toilet-building {
-  animation: toilet-build 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  animation: toilet-build 0.6s cubic-bezier(0.68, -0.55, 0.265,1.55);
 }
 
 /* HP 變化浮動數字動畫 */
@@ -508,7 +406,7 @@
 /* 成就解鎖通知 */
 @keyframes achievement-slide-in {
   0% { transform: translateX(100%) rotate(-10deg); opacity: 0; }
- 70% { transform: translateX(-10px) rotate(5deg); opacity: 1; }
+  70% { transform: translateX(-10px) rotate(5deg); opacity: 1; }
   100% { transform: translateX(0) rotate(0deg); opacity: 1; }
 }
 
