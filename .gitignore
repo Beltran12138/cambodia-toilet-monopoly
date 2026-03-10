@@ -1,1 +1,53 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+# Editor directories and files (exclude all IDE configs)
+.agent/
+.claude/
+.claude-plugin/
+.clinerules/
+.codebuddy/
+.codex/
+.comate/
+.cursor/
+.gemini/
+.kiro/
+.lingma/
+.qoder/
+.qwen/
+.roo/
+.rules/
+.trae/
+.windsurf/
+.config/
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Build output
+build/
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Vercel
 .vercel
