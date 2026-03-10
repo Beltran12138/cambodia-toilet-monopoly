@@ -393,6 +393,7 @@
     }
   }
   
+
   /* 触摸设备优化 */
   @media (hover: none) and (pointer: coarse) {
     /* 增大触摸区域 */
@@ -401,17 +402,17 @@
     }
     
     /* 移除悬停效果，改用点击反馈 */
-    .hover\\:border-\\[var\\(--vital-blue)\\]:hover {
+    .hover_border_blue:hover {
       @apply border-[#444];
     }
     
-    .hover\\:scale-105:hover {
+    .hover_scale:hover {
       transform: none;
     }
     
     /* 确保棋盘格子可点击 */
     .board-tile {
-     touch-action: manipulation;
+    touch-action: manipulation;
     }
   }
 }
@@ -421,7 +422,7 @@
   @apply relative;
   
   &::after {
-   content: attr(data-tooltip);
+  content: attr(data-tooltip);
     @apply absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-black text-white text-xs whitespace-nowrap opacity-0 pointer-events-none transition-opacity;
   }
   
@@ -548,9 +549,6 @@
 
 .particle {
   position: absolute;
-  width: 6px;
-  height: 6px;
-  background: var(--construction-orange);
-  border-radius: 50%;
+  pointer-events: none;
   animation: particle-burst 0.6s ease-out forwards;
 }
