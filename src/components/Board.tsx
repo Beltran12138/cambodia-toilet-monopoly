@@ -32,10 +32,10 @@ const Board: React.FC<BoardProps> = ({ tiles, players }) => {
   ];
 
   return (
-    <div className="grid grid-cols-7 grid-rows-7 gap-2 w-full max-w-4xl aspect-square mx-auto p-4 bg-[#111] border-4 border-[#333] relative">
+    <div className="grid grid-cols-7 grid-rows-7 gap-1 sm:gap-2 w-full max-w-4xl aspect-square mx-auto p-2 sm:p-4 bg-[#111] border-2 sm:border-4 border-[#333] relative">
       {/* Decorative background logo */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-5">
-        <i className="fas fa-toilet-paper text-[20rem] rotate-12"></i>
+        <i className="fas fa-toilet-paper text-[12rem] sm:text-[20rem] rotate-12"></i>
       </div>
 
       {Array.from({ length: 49 }).map((_, index) => {

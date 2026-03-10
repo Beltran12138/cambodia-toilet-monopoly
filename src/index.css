@@ -253,11 +253,165 @@
   /* 響應式調整 */
   @media (max-width: 1024px) {
     .panel-brutalist {
-      padding: 4rem;
+      padding: 1.5rem;
     }
     
     .btn-industrial {
       @apply text-sm px-4 py-2;
+    }
+    
+    /* 平板：调整网格布局 */
+    .grid.grid-cols-12 {
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      gap: 1.5rem;
+    }
+    
+    /* 棋盘缩小 */
+    .grid.grid-cols-7 {
+      max-width: 100%;
+     aspect-ratio: 1 / 1;
+    }
+  }
+  
+  /* 平板竖屏和手机横屏 */
+  @media (max-width: 768px) {
+    body {
+      font-size: 14px;
+    }
+    
+    h1 {
+      font-size: 2.5rem !important;
+    }
+    
+    header {
+      @apply flex-col items-center gap-4 text-center mb-6;
+    }
+    
+    header .flex.justify-between {
+      @apply flex-col gap-4;
+    }
+    
+    /* 单列布局 */
+    .grid.grid-cols-12 {
+      display: block;
+    }
+    
+    .col-span-12, .xl\:col-span-7, .xl\:col-span-5 {
+      width: 100%;
+    }
+    
+    /* 棋盘适配 */
+    .grid.grid-cols-7 {
+      gap: 0.25rem;
+      padding: 0.5rem;
+    }
+    
+    .grid.grid-cols-7 span.text-\[10px\] {
+      font-size: 8px;
+    }
+    
+    .w-6.h-6.rounded-full {
+      @apply w-5 h-5 text-[8px];
+    }
+    
+    /* 按钮堆叠 */
+    .flex.gap-4 {
+      @apply flex-col gap-2;
+    }
+    
+    .btn-industrial, .btn-industrial-blue {
+      width: 100%;
+      justify-content: center;
+    }
+    
+    /* 统计卡片调整 */
+    .grid.grid-cols-2 {
+      @apply grid-cols-2 gap-2;
+    }
+    
+    .grid.grid-cols-2 > div {
+      @apply p-2;
+    }
+    
+    .text-3xl.font-bold {
+      @apply text-xl;
+    }
+    
+    /* 模态框调整 */
+    .fixed.inset-0.z-50 {
+      @apply p-4;
+    }
+    
+    .panel-brutalist.max-w-md, 
+    .panel-brutalist.max-w-2xl {
+      @apply max-w-full p-6;
+    }
+    
+    .text-6xl, .text-7xl, .text-8xl {
+      @apply text-4xl;
+    }
+  }
+  
+  /* 手机竖屏优化 */
+  @media (max-width: 480px) {
+    body {
+      padding: 0.5rem;
+      background-size: 15px 15px;
+    }
+    
+    h1 {
+      font-size: 2rem !important;
+    }
+    
+    .text-xl {
+      @apply text-base;
+    }
+    
+    /* 隐藏次要元素 */
+    .game-log {
+      max-height: 150px;
+    }
+    
+    /* 成就通知调整 */
+    .achievement-notification {
+      @apply min-w-[280px] p-4;
+    }
+    
+    .achievement-notification .text-xl {
+      @apply text-lg;
+    }
+    
+    /* 玩家标记缩小 */
+    .player-token {
+      @apply w-4 h-4 text-[8px];
+    }
+    
+    /* 厕所图标调整 */
+    .text-\[var\(--vital-blue)\].text-2xl,
+    .text-\[var\(--vital-blue)\].text-3xl {
+      @apply text-xl;
+    }
+  }
+  
+  /* 触摸设备优化 */
+  @media (hover: none) and (pointer: coarse) {
+    /* 增大触摸区域 */
+    button {
+      min-height: 44px;
+    }
+    
+    /* 移除悬停效果，改用点击反馈 */
+    .hover\\:border-\\[var\\(--vital-blue)\\]:hover {
+      @apply border-[#444];
+    }
+    
+    .hover\\:scale-105:hover {
+      transform: none;
+    }
+    
+    /* 确保棋盘格子可点击 */
+    .board-tile {
+     touch-action: manipulation;
     }
   }
 }
@@ -274,4 +428,129 @@
   &:hover::after {
     @apply opacity-100;
   }
+}
+
+/* 階段二：新增動畫效果 */
+
+/* 骰子滾動動畫 */
+@keyframes dice-roll {
+  0%, 100% { transform: rotate(0deg) scale(1); }
+  25% { transform: rotate(90deg) scale(1.1); }
+  50% { transform: rotate(180deg) scale(1); }
+  75% { transform: rotate(270deg) scale(1.1); }
+}
+
+.dice-rolling {
+  animation: dice-roll 0.1s ease-in-out infinite;
+}
+
+/* 玩家移動腳步動畫 */
+@keyframes player-step {
+  0%, 100% { transform: translateY(0); }
+ 50% { transform: translateY(-5px); }
+}
+
+.player-moving {
+  animation: player-step 0.3s ease-in-out;
+}
+
+/* 建造廁所動畫 */
+@keyframes hammer-swing {
+  0%, 100% { transform: rotate(0deg); }
+ 30% { transform: rotate(-45deg); }
+ 60% { transform: rotate(45deg); }
+}
+
+.hammer-animating {
+  animation: hammer-swing 0.2s ease-in-out;
+}
+
+@keyframes toilet-build {
+  0% { transform: scale(0) rotate(-180deg); opacity: 0; }
+  70% { transform: scale(1.2) rotate(10deg); opacity: 0.8; }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+.toilet-building {
+  animation: toilet-build 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+/* HP 變化浮動數字動畫 */
+@keyframes hp-float-up {
+  0% { transform: translateY(0) scale(1); opacity: 1; }
+  100% { transform: translateY(-30px) scale(1.5); opacity: 0; }
+}
+
+.hp-float {
+  animation: hp-float-up 1s ease-out forwards;
+}
+
+@keyframes hp-float-down {
+  0% { transform: translateY(0) scale(1); opacity: 1; }
+  100% { transform: translateY(30px) scale(1.5); opacity: 0; }
+}
+
+.hp-damage {
+  animation: hp-float-down 1s ease-out forwards;
+}
+
+/* 低 HP 警告閃爍 */
+@keyframes warning-pulse {
+  0%, 100% { box-shadow: 0 0 5px var(--danger-red); }
+  50% { box-shadow: 0 0 20px var(--danger-red), 0 0 30px var(--danger-red); }
+}
+
+.hp-critical {
+  animation: warning-pulse 1s infinite;
+}
+
+/* 成就解鎖通知 */
+@keyframes achievement-slide-in {
+  0% { transform: translateX(100%) rotate(-10deg); opacity: 0; }
+ 70% { transform: translateX(-10px) rotate(5deg); opacity: 1; }
+  100% { transform: translateX(0) rotate(0deg); opacity: 1; }
+}
+
+.achievement-notification {
+  animation: achievement-slide-in 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+}
+
+/* 勝利/失敗結束畫面 */
+@keyframes end-game-zoom {
+  0% { transform: scale(0.8); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.end-game-panel {
+  animation: end-game-zoom 0.5s ease-out;
+}
+
+/* 機會卡片翻開效果 */
+@keyframes card-flip {
+  0% { transform: rotateY(-90deg); opacity: 0; }
+  100% { transform: rotateY(0deg); opacity: 1; }
+}
+
+.card-flipping {
+  animation: card-flip 0.4s ease-out;
+}
+
+/* 粒子效果容器 */
+.particle-container {
+  position: relative;
+  overflow: visible;
+}
+
+@keyframes particle-burst {
+  0% { transform: translate(0, 0) scale(1); opacity: 1; }
+  100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; }
+}
+
+.particle {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  background: var(--construction-orange);
+  border-radius: 50%;
+  animation: particle-burst 0.6s ease-out forwards;
 }

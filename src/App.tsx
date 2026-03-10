@@ -7,14 +7,17 @@ import ImpactDashboard from './components/ImpactDashboard';
 import CambodiaStats from './components/CambodiaStats';
 import SettingsPanel from './components/SettingsPanel';
 import DifficultySelect from './components/DifficultySelect';
+import AchievementSystem from './components/AchievementSystem';
+import GameStats from './components/GameStats';
+import DashboardIntegration from './components/DashboardIntegration';
 import { zhTW } from './locales/zh-TW';
 import { saveGameRecord, hasPendingGame } from './utils/cloudbase';
 import { soundManager } from './utils/sound';
 
 const App: React.FC = () => {
   const {
-   players,
-   tiles,
+  players,
+  tiles,
    currentPlayerIndex,
     diceResults,
     gameStatus,
@@ -23,19 +26,21 @@ const App: React.FC = () => {
     rollDice,
     buildToilet,
     endTurn,
-   confirmEvent,
+  confirmEvent,
    currentEvent,
     showTutorial,
-    setShowTutorial,
-    loadGame,
+   setShowTutorial,
+   loadGame,
     resetGame,
-   toiletsBuilt,
-   totalInvestment,
+  toiletsBuilt,
+  totalInvestment,
     hasRolled,
     hasActed,
     difficulty,
-    setDifficulty,
+   setDifficulty,
     startGameWithDifficulty,
+    gameStats,
+   incrementEventsTriggered,
   } = useGameLogic();
 
   const currentPlayer = players[currentPlayerIndex];
@@ -53,13 +58,22 @@ const App: React.FC = () => {
 
   // 檢查是否有待繼續的遊戲
   const [showContinuePrompt, setShowContinuePrompt] = useState(false);
+  
+  // 成就系统显示
+  const [showAchievements, setShowAchievements] = useState(false);
+  
+  // 游戏统计显示
+  const [showGameStats, setShowGameStats] = useState(false);
+  
+  // Dashboard 整合显示
+  const [showDashboardIntegration, setShowDashboardIntegration] = useState(false);
 
   useEffect(() => {
     // 檢查是否有保存的遊戲記錄
-   const checkPendingGame = async () => {
-     const hasPending = await hasPendingGame();
-     if (hasPending) {
-        setShowContinuePrompt(true);
+  const checkPendingGame = async () => {
+    const hasPending = await hasPendingGame();
+    if (hasPending) {
+       setShowContinuePrompt(true);
       }
     };
     checkPendingGame();
@@ -69,25 +83,25 @@ const App: React.FC = () => {
   const handleLoadGame = async () => {
     soundManager.play('click');
     await loadGame();
-    setShowContinuePrompt(false);
-    setShowDifficultySelect(false);
+   setShowContinuePrompt(false);
+   setShowDifficultySelect(false);
   };
 
   // 新遊戲
   const handleNewGame = () => {
     soundManager.play('click');
     resetGame();
-    setShowContinuePrompt(false);
-    setShowTutorial(true);
-    setShowDifficultySelect(true);
+   setShowContinuePrompt(false);
+   setShowTutorial(true);
+   setShowDifficultySelect(true);
   };
 
   // 保存遊戲
   const handleSaveGame = async () => {
     soundManager.play('click');
     await saveGameRecord({
-     players,
-     tiles,
+    players,
+    tiles,
      currentPlayerIndex,
       diceResults,
       gameStatus,
@@ -102,75 +116,88 @@ const App: React.FC = () => {
   const handleStartGame = () => {
     soundManager.play('click');
     startGameWithDifficulty(selectedDifficulty);
-    setShowDifficultySelect(false);
+   setShowDifficultySelect(false);
   };
 
   // 游戏状态变化时播放音效
   useEffect(() => {
-   if (gameStatus === 'WON') {
+  if (gameStatus === 'WON') {
       soundManager.play('win');
     } else if (gameStatus === 'LOST') {
       soundManager.play('lose');
     }
   }, [gameStatus]);
 
+  // 当事件触发时更新统计
+  useEffect(() => {
+  if (currentEvent) {
+    incrementEventsTriggered();
+    }
+  }, [currentEvent]);
+
   return (
-    <div className="min-h-screen bg-[var(--background)] p-8">
+    <div className="min-h-screen bg-[var(--background)] p-4 md:p-8">
       {/* 標題頭部 */}
-      <header className="mb-12 border-b-2 border-[#333] pb-6">
-        <div className="flex justify-between items-end">
-          <div>
-            <h1 className="text-6xl text-[var(--construction-orange)] m-0 Staatliches leading-none">THE WAY</h1>
-            <p className="text-xl text-[var(--text-secondary)] uppercase tracking-[0.3em] font-light">{t.subtitle}</p>
+      <header className="mb-6 md:mb-12 border-b-2 border-[#333] pb-4 md:pb-6">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
+          <div className="text-center md:text-left">
+            <h1 className="text-4xl md:text-6xl text-[var(--construction-orange)] m-0 Staatliches leading-none">THE WAY</h1>
+            <p className="text-base md:text-xl text-[var(--text-secondary)] uppercase tracking-[0.3em] font-light">{t.subtitle}</p>
           </div>
-          <div className="flex gap-4">
+          <div className="flex flex-wrap gap-2 justify-center md:justify-end">
+            <button 
+             onClick={() => { soundManager.play('click'); setShowAchievements(true); }}
+              className="btn-industrial text-xs md:text-sm px-3 py-2 md:px-4 md:py-2"
+            >
+              <i className="fas fa-trophy"></i> <span className="hidden sm:inline">成就</span>
+            </button>
             <button 
             onClick={() => { soundManager.play('click'); setShowSettings(true); }}
-              className="btn-industrial text-sm px-4 py-2"
+              className="btn-industrial text-xs md:text-sm px-3 py-2 md:px-4 md:py-2"
             >
-              <i className="fas fa-cog"></i> 設置
+              <i className="fas fa-cog"></i> <span className="hidden sm:inline">設置</span>
             </button>
             <button 
             onClick={handleSaveGame}
-              className="btn-industrial text-sm px-4 py-2"
+              className="btn-industrial text-xs md:text-sm px-3 py-2 md:px-4 md:py-2"
               disabled={gameStatus !== 'PLAYING'}
             >
-              <i className="fas fa-save"></i> {t.controls.saveGame || '保存遊戲'}
+              <i className="fas fa-save"></i> <span className="hidden sm:inline">{t.controls.saveGame || '保存遊戲'}</span>
             </button>
             <button 
             onClick={() => setShowTutorial(true)}
-              className="btn-industrial text-sm px-4 py-2"
+              className="btn-industrial text-xs md:text-sm px-3 py-2 md:px-4 md:py-2"
             >
-              <i className="fas fa-book"></i> {t.tutorial.title}
+              <i className="fas fa-book"></i> <span className="hidden sm:inline">{t.tutorial.title}</span>
             </button>
           </div>
         </div>
       </header>
 
       {/* 遊戲主界面 */}
-      <div className="grid grid-cols-12 gap-12">
+      <div className="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-12">
         {/* 左側：棋盤 */}
-        <div className="col-span-12 xl:col-span-7">
+        <div className="col-span-12 lg:col-span-7">
           <Board tiles={tiles} players={players} />
         </div>
 
         {/* 右側：狀態和控制 */}
-        <div className="col-span-12 xl:col-span-5 flex flex-col gap-8">
+        <div className="col-span-12 lg:col-span-5 flex flex-col gap-4 md:gap-8">
           {/* 玩家統計 */}
           <PlayerStats players={players} currentPlayerIndex={currentPlayerIndex} />
 
           {/* 影響力儀表板 */}
           <ImpactDashboard 
-           toiletsBuilt={toiletsBuilt}
-           totalInvestment={totalInvestment}
+          toiletsBuilt={toiletsBuilt}
+          totalInvestment={totalInvestment}
             villagerHP={players.find(p => p.role === 'VILLAGER')?.hp || 100}
             lapsCompleted={players.find(p => p.role === 'VILLAGER')?.laps || 0}
           />
 
           {/* 柬埔寨衛生數據 */}
           <CambodiaStats 
-           toiletsBuilt={toiletsBuilt}
-           totalInvestment={totalInvestment}
+          toiletsBuilt={toiletsBuilt}
+          totalInvestment={totalInvestment}
           />
 
           {/* 遊戲控制 */}
@@ -359,11 +386,41 @@ const App: React.FC = () => {
        isOpen={showSettings}
        onClose={() => setShowSettings(false)}
       />
+      
+      {/* 成就系統面板 */}
+      {showAchievements && (
+        <div className="fixed inset-0 bg-black/80 z-[100] flex items-center justify-center p-8">
+          <div className="relative max-w-2xl w-full max-h-[80vh] overflow-y-auto">
+            <button 
+             onClick={() => setShowAchievements(false)}
+             className="absolute -top-12 right-0 text-white flex items-center gap-2 font-bold hover:text-[var(--construction-orange)] transition-colors"
+            >
+              <i className="fas fa-times"></i> 關閉
+            </button>
+            <AchievementSystem stats={gameStats} />
+          </div>
+        </div>
+      )}
+
+      {/* Dashboard 整合面板 */}
+      {showDashboardIntegration && (
+        <div className="fixed inset-0 bg-black/80 z-[100] flex items-center justify-center p-8">
+          <div className="relative max-w-2xl w-full max-h-[80vh] overflow-y-auto">
+            <button 
+           onClick={() => setShowDashboardIntegration(false)}
+             className="absolute -top-12 right-0 text-white flex items-center gap-2 font-bold hover:text-[var(--construction-orange)] transition-colors"
+            >
+              <i className="fas fa-times"></i> 關閉
+            </button>
+            <DashboardIntegration gameStats={gameStats} />
+          </div>
+        </div>
+      )}
 
       {/* 難度選擇 */}
       {showDifficultySelect && (
         <DifficultySelect
-          selectedDifficulty={selectedDifficulty}
+         selectedDifficulty={selectedDifficulty}
          onSelectDifficulty={setSelectedDifficulty}
          onStartGame={handleStartGame}
         />

@@ -34,6 +34,18 @@ export interface Tile {
   priceLarge: number;
 }
 
+export interface GameStats {
+  toiletsBuilt: number;
+  smallToiletsBuilt: number;
+  largeToiletsBuilt: number;
+  totalInvestment: number;
+  villagerHP: number;
+  lapsCompleted: number;
+  gamesPlayed: number;
+  gamesWon: number;
+  eventsTriggered: number;
+}
+
 const BOARD_SIZE = 24;
 const t = zhTW;
 
@@ -71,11 +83,11 @@ const INITIAL_TILES: Tile[] = Array.from({ length: BOARD_SIZE }, (_, i) => {
   
   const villageIndex = Math.floor(i / 4) * 5 + (i % 4);
   return { 
-    id: i, 
+   id: i, 
     name: `VILLAGE ${i}`, 
     nameZh: VILLAGE_NAMES[i % VILLAGE_NAMES.length] || `村莊 ${i}`,
     type: 'VILLAGE', 
-  toiletType: 'NONE', 
+   toiletType: 'NONE', 
     priceSmall: 200, 
     priceLarge: 500 
   };
@@ -105,6 +117,8 @@ interface UseGameLogicReturn {
   difficulty: Difficulty;
   setDifficulty: (difficulty: Difficulty) => void;
   startGameWithDifficulty: (difficulty: Difficulty) => void;
+  gameStats: GameStats;
+  incrementEventsTriggered: () => void;
 }
 
 export const useGameLogic = (): UseGameLogicReturn => {
@@ -121,65 +135,84 @@ export const useGameLogic = (): UseGameLogicReturn => {
   const [discountRate, setDiscountRate] = useState(1);
   const [hasRolled, setHasRolled] = useState(false);
   const [hasActed, setHasActed] = useState(false);
+  const [eventsTriggered, setEventsTriggered] = useState(0);
+  
+  // 游戏统计
+  const [gameStats, setGameStats] = useState<GameStats>(() => {
+   const saved = localStorage.getItem('theWayGameStats');
+    return saved ? JSON.parse(saved) : {
+     toiletsBuilt: 0,
+      smallToiletsBuilt: 0,
+      largeToiletsBuilt: 0,
+     totalInvestment: 0,
+      villagerHP: 100,
+      lapsCompleted: 0,
+      gamesPlayed: 0,
+      gamesWon: 0,
+      eventsTriggered: 0,
+    };
+  });
 
   const startGameWithDifficulty = useCallback((difficulty: Difficulty) => {
-    setDifficulty(difficulty);
-    setPlayers(getInitialPlayersForDifficulty(difficulty));
-    setTiles(INITIAL_TILES);
-    setCurrentPlayerIndex(0);
-    setDiceResults([0, 0]);
-    setGameStatus('PLAYING');
-    setMessage(t.events.gameStarted);
-    setMessageHistory([t.events.gameStarted]);
-    setCurrentEvent(null);
-    setDiscountRate(1);
-    setHasRolled(false);
-    setHasActed(false);
-    setShowTutorial(false);
+   setDifficulty(difficulty);
+   setPlayers(getInitialPlayersForDifficulty(difficulty));
+   setTiles(INITIAL_TILES);
+   setCurrentPlayerIndex(0);
+   setDiceResults([0, 0]);
+   setGameStatus('PLAYING');
+   setMessage(t.events.gameStarted);
+   setMessageHistory([t.events.gameStarted]);
+   setCurrentEvent(null);
+   setDiscountRate(1);
+   setHasRolled(false);
+   setHasActed(false);
+   setShowTutorial(false);
+    // 增加游戏次数
+   setGameStats(prev => ({ ...prev, gamesPlayed: prev.gamesPlayed + 1 }));
   }, []);
 
   const addMessage = useCallback((newMessage: string) => {
-    setMessage(newMessage);
-    setMessageHistory(prev => {
+   setMessage(newMessage);
+   setMessageHistory(prev => {
      const updated = [newMessage, ...prev];
       return updated.slice(0, 20);
     });
   }, []);
 
   const endTurn = useCallback(() => {
-    setCurrentPlayerIndex((prev) => (prev + 1) % players.length);
-    setDiscountRate(1);
-    setHasRolled(false);
-    setHasActed(false);
-    setDiceResults([0, 0]);
-    setCurrentEvent(null);
+   setCurrentPlayerIndex((prev) => (prev + 1) % players.length);
+   setDiscountRate(1);
+   setHasRolled(false);
+   setHasActed(false);
+   setDiceResults([0, 0]);
+   setCurrentEvent(null);
   }, [players.length]);
 
   const movePlayer = useCallback((d1: number, d2: number) => {
-    if (gameStatus !== 'PLAYING') return;
+   if (gameStatus !== 'PLAYING') return;
    const steps = d1 + d2;
    const settings = DIFFICULTY_SETTINGS[difficulty];
 
-    setPlayers((prevPlayers) => {
+   setPlayers((prevPlayers) => {
      const newPlayers = [...prevPlayers];
      const player = { ...newPlayers[currentPlayerIndex] };
       let eventMessage = '';
 
-      if (player.inPrison) {
-        if (d1 === d2) {
+     if (player.inPrison) {
+       if (d1 === d2) {
          player.inPrison = false;
          player.prisonTurns = 0;
           eventMessage = t.events.prisonEscape.replace('{role}', player.role).replace('{num}', String(d1));
         } else {
          player.prisonTurns += 1;
-          if (player.prisonTurns >= 3) {
+         if (player.prisonTurns >= 3) {
            player.inPrison = false;
            player.funds -= 50;
            player.prisonTurns = 0;
             eventMessage = t.events.prisonFine.replace('{role}', player.role);
           } else {
             eventMessage = t.events.stillInPrison.replace('{role}', player.role);
-            setMessage(eventMessage);
+           setMessage(eventMessage);
             newPlayers[currentPlayerIndex] = player;
             return newPlayers;
           }
@@ -189,9 +222,9 @@ export const useGameLogic = (): UseGameLogicReturn => {
      const oldPos = player.position;
      const newPos = (oldPos + steps) % BOARD_SIZE;
       
-      if (newPos < oldPos) {
+     if (newPos < oldPos) {
        player.laps += 1;
-        if (player.role.startsWith('VILLAGER')) {
+       if (player.role.startsWith('VILLAGER')) {
          player.hp -= settings.hpLossLap;
           eventMessage = t.events.villagerLap;
         }
@@ -201,9 +234,9 @@ export const useGameLogic = (): UseGameLogicReturn => {
       newPlayers[currentPlayerIndex] = player;
       
      const tile = tiles[newPos];
-      if (player.role.startsWith('VILLAGER')) {
-        if (tile.type === 'VILLAGE') {
-          if (tile.toiletType === 'NONE') {
+     if (player.role.startsWith('VILLAGER')) {
+       if (tile.type === 'VILLAGE') {
+         if (tile.toiletType === 'NONE') {
            player.hp -= settings.hpLossNoToilet;
             eventMessage = t.events.noToilet.replace('{name}', tile.nameZh);
           } else if (tile.toiletType === 'SMALL') {
@@ -215,94 +248,103 @@ export const useGameLogic = (): UseGameLogicReturn => {
           }
         }
       } else {
-        if (tile.type === 'PRISON') {
+       if (tile.type === 'PRISON') {
          player.inPrison = true;
           eventMessage = t.events.donorPrison.replace('{role}', player.role);
         }
-        if (tile.type === 'CHANCE') {
+       if (tile.type === 'CHANCE') {
          const randomEvent = getRandomEvent();
-          setCurrentEvent(randomEvent);
+         setCurrentEvent(randomEvent);
           eventMessage = randomEvent.title; 
         }
       }
 
-      setMessage(eventMessage || message);
+     setMessage(eventMessage || message);
       return newPlayers;
     });
   }, [currentPlayerIndex, gameStatus, tiles, message, difficulty]);
 
   const rollDice = useCallback(() => {
-    if (hasRolled) return;
+   if (hasRolled) return;
    const d1 = Math.floor(Math.random() * 6) + 1;
    const d2 = Math.floor(Math.random() * 6) + 1;
-    setDiceResults([d1, d2]);
-    setHasRolled(true);
+   setDiceResults([d1, d2]);
+   setHasRolled(true);
     movePlayer(d1, d2);
   }, [movePlayer, hasRolled]);
 
   const buildToilet = useCallback((tileId: number, type: 'SMALL' | 'LARGE') => {
-   const currentPlayer = players[currentPlayerIndex];
-    if (currentPlayer.role.startsWith('VILLAGER')) return;
-    if (currentPlayer.position !== tileId) return; 
-    if (hasActed) return; 
+   const currentPlayer= players[currentPlayerIndex];
+   if (currentPlayer.role.startsWith('VILLAGER')) return;
+   if (currentPlayer.position !== tileId) return; 
+   if (hasActed) return; 
 
    const tile = tiles[tileId];
    const baseCost = type === 'SMALL' ? tile.priceSmall : tile.priceLarge;
    const settings = DIFFICULTY_SETTINGS[difficulty];
    const cost = Math.floor(baseCost * discountRate * settings.costMultiplier);
 
-    if (currentPlayer.funds >= cost) {
-      setPlayers((prev) => {
+   if (currentPlayer.funds >= cost) {
+     setPlayers((prev) => {
        const next = [...prev];
         next[currentPlayerIndex] = { ...next[currentPlayerIndex], funds: next[currentPlayerIndex].funds - cost };
         return next;
       });
-      setTiles((prev) => {
+     setTiles((prev) => {
        const next = [...prev];
         next[tileId] = { ...next[tileId], toiletType: type };
         return next;
       });
-      setHasActed(true);
-      setMessage(t.events.builtToilet.replace('{name}', tile.nameZh).replace('{type}', type === 'SMALL' ? t.toiletTypes.SMALL : t.toiletTypes.LARGE));
-      autoSaveGame({ players, tiles, currentPlayerIndex, diceResults, gameStatus, message });
+     setHasActed(true);
+      
+      // 更新统计
+     setGameStats(prev => ({
+        ...prev,
+       toiletsBuilt: prev.toiletsBuilt + 1,
+        smallToiletsBuilt: type === 'SMALL' ? prev.smallToiletsBuilt + 1 : prev.smallToiletsBuilt,
+        largeToiletsBuilt: type === 'LARGE' ? prev.largeToiletsBuilt + 1 : prev.largeToiletsBuilt,
+      }));
+      
+     setMessage(t.events.builtToilet.replace('{name}', tile.nameZh).replace('{type}', type === 'SMALL' ? t.toiletTypes.SMALL : t.toiletTypes.LARGE));
+     autoSaveGame({ players, tiles, currentPlayerIndex, diceResults, gameStatus, message });
     } else {
-      setMessage(t.events.insufficientFunds);
+     setMessage(t.events.insufficientFunds);
     }
   }, [currentPlayerIndex, players, tiles, discountRate, diceResults, gameStatus, message, hasActed, difficulty]);
 
   const confirmEvent = useCallback(() => {
-    if (!currentEvent) return;
+   if (!currentEvent) return;
     
    const eventEffect = currentEvent.effect({ tiles, players });
     
-    setPlayers((prevPlayers) => {
+   setPlayers((prevPlayers) => {
      const newPlayers = [...prevPlayers];
-     const player = { ...newPlayers[currentPlayerIndex] };
+     const player= { ...newPlayers[currentPlayerIndex] };
       
-      if (eventEffect.updates.fundsChange) {
+     if (eventEffect.updates.fundsChange) {
        player.funds += eventEffect.updates.fundsChange;
       }
-      if (eventEffect.updates.hpChange) {
+     if (eventEffect.updates.hpChange) {
         newPlayers[0] = { ...newPlayers[0], hp: newPlayers[0].hp + eventEffect.updates.hpChange };
       }
-      if (eventEffect.updates.freeToilet && player.role.startsWith('DONOR')) {
+     if (eventEffect.updates.freeToilet && player.role.startsWith('DONOR')) {
        const currentTile = tiles[player.position];
-        if (currentTile.type === 'VILLAGE' && currentTile.toiletType === 'NONE') {
-          setTiles((prev) => {
+       if (currentTile.type === 'VILLAGE' && currentTile.toiletType === 'NONE') {
+         setTiles((prev) => {
            const next = [...prev];
             next[player.position] = { ...next[player.position], toiletType: 'SMALL' };
             return next;
           });
         }
       }
-      if (eventEffect.updates.discountRate) {
-        setDiscountRate(eventEffect.updates.discountRate);
+     if (eventEffect.updates.discountRate) {
+       setDiscountRate(eventEffect.updates.discountRate);
       }
-      if (eventEffect.updates.destroyToiletTile >= 0) {
-        setTiles((prev) => {
+     if (eventEffect.updates.destroyToiletTile >= 0) {
+       setTiles((prev) => {
          const next = [...prev];
          const tile = next[eventEffect.updates.destroyToiletTile];
-          if (tile && tile.type === 'VILLAGE') {
+         if (tile && tile.type === 'VILLAGE') {
             next[eventEffect.updates.destroyToiletTile] = { ...tile, toiletType: 'NONE' };
           }
           return next;
@@ -313,58 +355,70 @@ export const useGameLogic = (): UseGameLogicReturn => {
       return newPlayers;
     });
 
-    setMessage(eventEffect.message);
-    setCurrentEvent(null);
+   setMessage(eventEffect.message);
+   setCurrentEvent(null);
   }, [currentEvent, currentPlayerIndex, players, tiles]);
 
   useEffect(() => {
-  const villager = players.find(p => p.role.startsWith('VILLAGER'));
+   const villager = players.find(p => p.role.startsWith('VILLAGER'));
    if (villager) {
      if (villager.hp <= 0) {
-        setGameStatus('LOST');
-        setMessage(t.events.gameOver);
+       setGameStatus('LOST');
+       setMessage(t.events.gameOver);
       } else if (villager.laps >= 5 || villager.hp >= 150) {
-        setGameStatus('WON');
-        setMessage(t.events.victory);
+       setGameStatus('WON');
+       setMessage(t.events.victory);
       }
     }
   }, [players]);
 
+  // 保存游戏统计到 localStorage
+  useEffect(() => {
+   const statsWithRealtime = {
+      ...gameStats,
+     toiletsBuilt,
+     totalInvestment,
+      villagerHP: players.find(p => p.role === 'VILLAGER')?.hp || 100,
+      lapsCompleted: players.find(p => p.role === 'VILLAGER')?.laps || 0,
+    };
+   localStorage.setItem('theWayGameStats', JSON.stringify(statsWithRealtime));
+  }, [gameStats, toiletsBuilt, totalInvestment, players]);
+
   const loadGame = useCallback(async () => {
     try {
-    const cloudbase = await import('../utils/cloudbase');
-    const record = await cloudbase.getGameRecord();
+     const cloudbase = await import('../utils/cloudbase');
+     const record = await cloudbase.getGameRecord();
       
      if (record && record.gameData) {
-        setPlayers(record.gameData.players);
-        setTiles(record.gameData.tiles);
-        setCurrentPlayerIndex(record.gameData.currentPlayerIndex);
-        setDiceResults(record.gameData.diceResults as [number, number] || [0, 0]);
-        setGameStatus(record.gameData.gameStatus as 'PLAYING' | 'WON' | 'LOST');
-        setMessage(record.gameData.message);
-        setHasRolled(record.gameData.hasRolled || false);
-        setHasActed(record.gameData.hasActed || false);
-        setShowTutorial(false);
-      console.log('遊戲記錄已載入');
+       setPlayers(record.gameData.players);
+       setTiles(record.gameData.tiles);
+       setCurrentPlayerIndex(record.gameData.currentPlayerIndex);
+       setDiceResults(record.gameData.diceResults as [number, number] || [0, 0]);
+       setGameStatus(record.gameData.gameStatus as 'PLAYING' | 'WON' | 'LOST');
+       setMessage(record.gameData.message);
+       setHasRolled(record.gameData.hasRolled || false);
+       setHasActed(record.gameData.hasActed || false);
+       setShowTutorial(false);
+       console.log('遊戲記錄已載入');
       }
     } catch (error) {
-    console.error('載入遊戲記錄失敗:', error);
+     console.error('載入遊戲記錄失敗:', error);
     }
   }, []);
 
   const resetGame = useCallback(() => {
-    setPlayers(getInitialPlayersForDifficulty(difficulty));
-    setTiles(INITIAL_TILES);
-    setCurrentPlayerIndex(0);
-    setDiceResults([0, 0]);
-    setGameStatus('PLAYING');
-    setMessage(t.events.gameStarted);
-    setMessageHistory([t.events.gameStarted]);
-    setCurrentEvent(null);
-    setDiscountRate(1);
-    setShowTutorial(true);
-    localStorage.removeItem('theWayGameRecord');
-    localStorage.removeItem('theWayPlayerId');
+   setPlayers(getInitialPlayersForDifficulty(difficulty));
+   setTiles(INITIAL_TILES);
+   setCurrentPlayerIndex(0);
+   setDiceResults([0, 0]);
+   setGameStatus('PLAYING');
+   setMessage(t.events.gameStarted);
+   setMessageHistory([t.events.gameStarted]);
+   setCurrentEvent(null);
+   setDiscountRate(1);
+   setShowTutorial(true);
+   localStorage.removeItem('theWayGameRecord');
+   localStorage.removeItem('theWayPlayerId');
   }, [difficulty]);
 
   const toiletsBuilt = tiles.filter(t => t.type === 'VILLAGE' && t.toiletType !== 'NONE').length;
@@ -372,10 +426,16 @@ export const useGameLogic = (): UseGameLogicReturn => {
   const currentFunds = players.filter(p => p.role.startsWith('DONOR')).reduce((sum, p) => sum + p.funds, 0);
   const totalInvestment = initialFunds - currentFunds;
 
+  // 增加事件触发统计
+  const incrementEventsTriggered = useCallback(() => {
+   setEventsTriggered(prev => prev + 1);
+   setGameStats(prev => ({ ...prev, eventsTriggered: prev.eventsTriggered + 1 }));
+  }, []);
+
   return {
    players,
    tiles,
-   currentPlayerIndex,
+    currentPlayerIndex,
     diceResults,
     gameStatus,
     message,
@@ -384,17 +444,19 @@ export const useGameLogic = (): UseGameLogicReturn => {
     buildToilet,
     endTurn,
    confirmEvent,
-   currentEvent,
+    currentEvent,
     showTutorial,
-    setShowTutorial,
-    loadGame,
+   setShowTutorial,
+   loadGame,
     resetGame,
    toiletsBuilt,
    totalInvestment,
     hasRolled,
     hasActed,
     difficulty,
-    setDifficulty,
+   setDifficulty,
     startGameWithDifficulty,
+    gameStats,
+   incrementEventsTriggered,
   };
 };
