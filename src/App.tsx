@@ -389,30 +389,35 @@ const App: React.FC = () => {
       
       {/* 成就系統面板 */}
       {showAchievements && (
-        <div className="fixed inset-0 bg-black/80 z-[100] flex items-center justify-center p-8">
-          <div className="relative max-w-2xl w-full max-h-[80vh] overflow-y-auto">
+        <div className="fixed inset-0 bg-black/90 z-[100] flex items-center justify-center p-4 md:p-8" onClick={() => setShowAchievements(false)}>
+          <div className="relative max-w-2xl w-full flex flex-col max-h-[90vh]" onClick={(e) => e.stopPropagation()}>
             <button 
              onClick={() => setShowAchievements(false)}
-             className="absolute -top-12 right-0 text-white flex items-center gap-2 font-bold hover:text-[var(--construction-orange)] transition-colors"
+             className="self-end mb-4 bg-[#1a1a1a] border-2 border-[var(--construction-orange)] px-6 py-3 text-white flex items-center gap-2 font-bold hover:bg-[var(--construction-orange)] transition-all uppercase tracking-widest text-sm shadow-[4px_4px_0px_0px_rgba(255,140,0,0.3)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none"
+             style={{ zIndex: 101 }}
             >
               <i className="fas fa-times"></i> 關閉
             </button>
-            <AchievementSystem stats={gameStats} />
+            <div className="overflow-y-auto panel-brutalist p-6 border-none bg-[#1a1a1a]">
+              <AchievementSystem stats={gameStats} />
+            </div>
           </div>
         </div>
       )}
 
       {/* Dashboard 整合面板 */}
       {showDashboardIntegration && (
-        <div className="fixed inset-0 bg-black/80 z-[100] flex items-center justify-center p-8">
-          <div className="relative max-w-2xl w-full max-h-[80vh] overflow-y-auto">
+        <div className="fixed inset-0 bg-black/80 z-[100] flex items-center justify-center p-4 md:p-8">
+          <div className="relative max-w-2xl w-full flex flex-col max-h-[90vh]">
             <button 
-           onClick={() => setShowDashboardIntegration(false)}
-             className="absolute -top-12 right-0 text-white flex items-center gap-2 font-bold hover:text-[var(--construction-orange)] transition-colors"
+             onClick={() => setShowDashboardIntegration(false)}
+             className="self-end mb-4 bg-[#1a1a1a] border-2 border-[var(--construction-orange)] px-4 py-2 text-white flex items-center gap-2 font-bold hover:bg-[var(--construction-orange)] transition-all uppercase tracking-widest text-xs shadow-[4px_4px_0px_0px_rgba(255,140,0,0.3)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none"
             >
-              <i className="fas fa-times"></i> 關閉
+              <i className="fas fa-times"></i> 關閉面板
             </button>
-            <DashboardIntegration gameStats={gameStats} />
+            <div className="overflow-y-auto panel-brutalist p-0 border-none">
+              <DashboardIntegration gameStats={gameStats} />
+            </div>
           </div>
         </div>
       )}
