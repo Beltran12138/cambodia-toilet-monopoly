@@ -1,0 +1,15 @@
+{
+  "envId": "theway-2gfdpspmc0387027",
+  "functionRoot": "./functions",
+  "functions": [],
+  "ai": {
+    "defaultAgent": "claude",
+    "agents": {
+      "claude": {
+        "type": "custom",
+        "baseUrl": "https://api.anthropic.com",
+        "apiKey": ""
+      }
+    }
+  }
+}

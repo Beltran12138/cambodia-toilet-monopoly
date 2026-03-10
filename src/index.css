@@ -1,0 +1,277 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --clay-red: #A0522D;
+    --construction-orange: #FF8C00;
+    --concrete-slate: #2F4F4F;
+    --vital-blue: #00CED1;
+    --danger-red: #DC143C;
+    --background: #1A1A1A;
+    --text-primary: #E0E0E0;
+    --text-secondary: #A0A0A0;
+    
+    font-family: 'Space Mono', monospace;
+  }
+
+  body {
+    @apply bg-[var(--background)] text-[var(--text-primary)] overflow-x-hidden;
+    background-image: 
+      linear-gradient(rgba(255, 140, 0, 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 140, 0, 0.05) 1px, transparent 1px);
+    background-size: 20px 20px;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Staatliches', sans-serif;
+    @apply uppercase tracking-wider;
+  }
+
+  /* 自定義滾動條 */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-[#1a1a1a];
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-[var(--construction-orange)] rounded;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-[#ff6600];
+  }
+}
+
+@layer components {
+  .btn-industrial {
+    @apply px-6 py-2 border-2 border-[var(--construction-orange)] text-[var(--construction-orange)] 
+           hover:bg-[var(--construction-orange)] hover:text-black transition-all duration-300
+           font-bold uppercase flex items-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed;
+    clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%);
+  }
+
+  .btn-industrial-blue {
+    @apply px-6 py-2 border-2 border-[var(--vital-blue)] text-[var(--vital-blue)] 
+           hover:bg-[var(--vital-blue)] hover:text-black transition-all duration-300
+           font-bold uppercase flex items-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed;
+    clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%);
+  }
+
+  .panel-brutalist {
+    @apply bg-[#222] border-l-4 border-[var(--construction-orange)] p-6 shadow-2xl relative;
+    box-shadow: 10px 10px 0px rgba(0, 0, 0, 0.5);
+    
+    &::before {
+     content: '';
+      position: absolute;
+     top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, var(--construction-orange), transparent);
+      opacity: 0.5;
+    }
+  }
+
+  /* HP 儀表板 */
+  .hp-gauge {
+    @apply h-6 bg-gray-800 border-2 border-gray-600 relative overflow-hidden rounded-sm;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);
+    
+    &::after {
+     content: '';
+      position: absolute;
+     top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    }
+  }
+
+  .hp-fill {
+    @apply h-full transition-all duration-500 ease-in-out absolute top-0 left-0;
+    background: repeating-linear-gradient(
+      45deg,
+      var(--danger-red),
+      var(--danger-red) 10px,
+      #B22222 10px,
+      #B22222 20px
+    );
+    box-shadow: 0 0 10px rgba(220, 20, 60, 0.5);
+    
+    /* HP 低時閃爍動畫 */
+    @keyframes hp-low-pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.7; }
+    }
+    
+    .critical & {
+      animation: hp-low-pulse 1s infinite;
+    }
+  }
+
+  /* 機會卡片彈窗 */
+  .chance-card-modal {
+    @apply fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-8;
+    
+    .chance-card {
+      @apply max-w-md w-full panel-brutalist bg-[#111] border-4 border-[var(--construction-orange)] p-8 text-center;
+      animation: card-slide-in 0.3s ease-out;
+    }
+  }
+
+  @keyframes card-slide-in {
+    from {
+      transform: translateY(-50px);
+      opacity: 0;
+    }
+   to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  /* 教程步驟動畫 */
+  .tutorial-step {
+    @apply transition-all duration-300;
+    animation: fade-in-up 0.5s ease-out;
+  }
+
+  @keyframes fade-in-up {
+    from {
+      transform: translateY(20px);
+      opacity: 0;
+    }
+   to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  /* 影響力儀表板進度條 */
+  .impact-progress {
+    @apply h-2 bg-gray-800 rounded-full overflow-hidden;
+    
+    .progress-bar {
+      @apply h-full transition-all duration-500;
+      background: linear-gradient(90deg, var(--vital-blue), var(--construction-orange));
+    }
+  }
+
+  /* 遊戲格子懸停效果 */
+  .board-tile {
+    @apply relative flex flex-col items-center justify-between p-2 border-2 transition-all duration-300;
+    
+    &:hover {
+      transform: scale(1.05);
+      z-index: 10;
+    }
+    
+    &.start {
+      @apply bg-[var(--vital-blue)] text-black border-white;
+    }
+    
+    &.chance {
+      @apply border-[var(--construction-orange)];
+    }
+    
+    &.prison {
+      @apply border-[var(--danger-red)];
+    }
+  }
+
+  /* 玩家標記 */
+  .player-token {
+    @apply w-6 h-6 rounded-full border-2 border-black flex items-center justify-center text-[10px] font-bold shadow-lg;
+    transition: all 0.3s ease;
+    
+    &:hover {
+      transform: scale(1.2);
+    }
+    
+    &.villager {
+      @apply bg-green-500;
+    }
+    
+    &.donor {
+      @apply bg-[var(--construction-orange)];
+    }
+  }
+
+  /* 廁所建造按鈕 */
+  .build-button {
+    @apply p-3 border-2 border-[#444] hover:border-[var(--vital-blue)] text-left group transition-all cursor-pointer
+           disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:border-[#444];
+    
+    &:not(:disabled):hover {
+      @apply bg-[#1a1a1a];
+    }
+    
+    .toilet-icon {
+      @apply opacity-0 group-hover:opacity-100 transition-all text-[var(--vital-blue)] font-bold uppercase text-[10px];
+    }
+  }
+
+  /* 遊戲日誌 */
+  .game-log {
+    @apply bg-black/50 border-2 border-[#333] p-4 font-mono text-sm overflow-y-auto;
+    max-height: 300px;
+    
+    .log-entry {
+      @apply text-[var(--text-primary)] animate-in fade-in slide-in-from-left duration-500;
+      
+      .log-prefix {
+        @apply text-[var(--construction-orange)] mr-2;
+      }
+    }
+  }
+
+  /* 狀態徽章 */
+  .status-badge {
+    @apply text-[10px] px-2 py-1 font-bold uppercase;
+    
+    &.active {
+      @apply bg-[var(--construction-orange)] text-black;
+    }
+    
+    &.prison {
+      @apply bg-[var(--danger-red)] text-white;
+    }
+    
+    &.critical {
+      @apply bg-[var(--danger-red)] text-white animate-pulse;
+    }
+  }
+
+  /* 響應式調整 */
+  @media (max-width: 1024px) {
+    .panel-brutalist {
+      padding: 4rem;
+    }
+    
+    .btn-industrial {
+      @apply text-sm px-4 py-2;
+    }
+  }
+}
+
+/* 工具提示 */
+.tooltip {
+  @apply relative;
+  
+  &::after {
+   content: attr(data-tooltip);
+    @apply absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-black text-white text-xs whitespace-nowrap opacity-0 pointer-events-none transition-opacity;
+  }
+  
+  &:hover::after {
+    @apply opacity-100;
+  }
+}
