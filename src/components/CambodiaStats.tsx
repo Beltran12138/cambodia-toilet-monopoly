@@ -28,14 +28,14 @@ const CambodiaStats: React.FC<CambodiaStatsProps> = ({ toiletsBuilt, totalInvest
   };
 
   return (
-    <div className="panel-brutalist bg-[#1a1a1a] border-l-4 border-[var(--clay-red)]">
+    <div className="panel-cozy" style={{ borderLeft: '4px solid #FF8C69' }}>
       <div 
         className="flex items-center justify-between cursor-pointer"
         onClick={() => setIsExpanded(!isExpanded)}
       >
         <div className="flex items-center gap-3">
-          <i className="fas fa-globe-asia text-3xl text-[var(--clay-red)]"></i>
-          <h3 className="text-2xl text-white Staatliches m-0">柬埔寨衛生現況</h3>
+          <span style={{ fontSize: '1.5rem' }}>🌏</span>
+          <h3 style={{ fontFamily: "'Baloo 2', sans-serif", color: '#5C3D2E', margin: 0, fontSize: '1.05rem' }}>柬埔寨衛生現況</h3>
         </div>
         <i className={`fas fa-chevron-${isExpanded ? 'up' : 'down'} text-[var(--text-secondary)]`}></i>
       </div>

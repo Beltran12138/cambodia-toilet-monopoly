@@ -8,6 +8,40 @@ interface ImpactDashboardProps {
   lapsCompleted: number;
 }
 
+const StatCard: React.FC<{
+  emoji: string;
+  label: string;
+  value: string | number;
+  accent: string;
+}> = ({ emoji, label, value, accent }) => (
+  <div
+    style={{
+      background: `${accent}12`,
+      borderRadius: '1rem',
+      border: `2px solid ${accent}30`,
+      padding: '0.875rem',
+    }}
+  >
+    <div className="flex items-center gap-2 mb-1">
+      <span style={{ fontSize: '1.1rem' }}>{emoji}</span>
+      <span style={{ fontSize: '0.65rem', color: '#9C7A6A', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+        {label}
+      </span>
+    </div>
+    <div
+      style={{
+        fontFamily: "'Baloo 2', sans-serif",
+        fontWeight: 800,
+        fontSize: '1.5rem',
+        color: accent,
+        lineHeight: 1,
+      }}
+    >
+      {value}
+    </div>
+  </div>
+);
+
 const ImpactDashboard: React.FC<ImpactDashboardProps> = ({
   toiletsBuilt,
   totalInvestment,
@@ -15,98 +49,80 @@ const ImpactDashboard: React.FC<ImpactDashboardProps> = ({
   lapsCompleted,
 }) => {
   const t = zhTW.impact;
-  
-  // 計算影響力指標
+
   const calculateImpactLevel = () => {
-   const score = toiletsBuilt * 100 + totalInvestment / 10 + (villagerHP - 100) * 2 + lapsCompleted * 50;
-    if (score >= 2000) return { level: t.legend, color: 'text-yellow-400', icon: 'fa-crown' };
-    if (score >= 1500) return { level: t.hero, color: 'text-purple-400', icon: 'fa-medal' };
-    if (score >= 1000) return { level: t.champion, color: 'text-[var(--vital-blue)]', icon: 'fa-trophy' };
-    if (score >= 500) return { level: t.helper, color: 'text-green-400', icon: 'fa-star' };
-    return { level: t.beginner, color: 'text-[var(--text-secondary)]', icon: 'fa-seedling' };
+    const score = toiletsBuilt * 100 + totalInvestment / 10 + (villagerHP - 100) * 2 + lapsCompleted * 50;
+    if (score >= 2000) return { level: t.legend,   emoji: '👑', color: '#F4A800' };
+    if (score >= 1500) return { level: t.hero,     emoji: '🥇', color: '#C4A8E0' };
+    if (score >= 1000) return { level: t.champion, emoji: '🏆', color: '#70C8E8' };
+    if (score >= 500)  return { level: t.helper,   emoji: '⭐', color: '#6BBF6A' };
+    return                    { level: t.beginner, emoji: '🌱', color: '#9C7A6A' };
   };
 
-  // 估算拯救生命數（基於廁所數量和 HP）
-  const livesSaved = Math.floor(toiletsBuilt * 2.5 + Math.max(0, villagerHP - 100) * 0.3);
-  
-  // 衛生評分
-  const hygieneScore = Math.min(100, Math.floor((toiletsBuilt / 10) * 100 + (villagerHP / 150) * 100));
-  
-  const impactLevel = calculateImpactLevel();
+  const livesSaved     = Math.floor(toiletsBuilt * 2.5 + Math.max(0, villagerHP - 100) * 0.3);
+  const hygieneScore   = Math.min(100, Math.floor((toiletsBuilt / 10) * 100 + (villagerHP / 150) * 100));
+  const impactLevel    = calculateImpactLevel();
 
   return (
-    <div className="panel-brutalist bg-[#1a1a1a] border-l-4 border-[var(--vital-blue)]">
-      <div className="flex items-center gap-3 mb-6">
-        <i className="fas fa-chart-line text-3xl text-[var(--vital-blue)]"></i>
-        <h3 className="text-2xl text-white Staatliches m-0">{t.title}</h3>
+    <div className="panel-cozy" style={{ borderLeft: '4px solid #70C8E8' }}>
+      <div className="flex items-center gap-3 mb-4">
+        <span style={{ fontSize: '1.5rem' }}>📊</span>
+        <h3
+          style={{
+            fontFamily: "'Baloo 2', sans-serif",
+            margin: 0,
+            color: '#5C3D2E',
+            fontSize: '1.1rem',
+          }}
+        >
+          {t.title}
+        </h3>
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
-        {/* 拯救生命數 */}
-        <div className="p-4 bg-[#111] border-2 border-[var(--vital-blue)]">
-          <div className="flex items-center gap-2 mb-2">
-            <i className="fas fa-heart text-[var(--danger-red)]"></i>
-            <span className="text-xs text-[var(--text-secondary)] uppercase">{t.livesSaved}</span>
-          </div>
-          <div className="text-3xl font-bold text-white Staatliches">{livesSaved}</div>
-        </div>
-
-        {/* 已建廁所數 */}
-        <div className="p-4 bg-[#111] border-2 border-[var(--construction-orange)]">
-          <div className="flex items-center gap-2 mb-2">
-            <i className="fas fa-toilet text-[var(--vital-blue)]"></i>
-            <span className="text-xs text-[var(--text-secondary)] uppercase">{t.toiletsBuilt}</span>
-          </div>
-          <div className="text-3xl font-bold text-white Staatliches">{toiletsBuilt}</div>
-        </div>
-
-        {/* 總投資金額 */}
-        <div className="p-4 bg-[#111] border-2 border-green-600">
-          <div className="flex items-center gap-2 mb-2">
-            <i className="fas fa-dollar-sign text-green-500"></i>
-            <span className="text-xs text-[var(--text-secondary)] uppercase">{t.totalInvestment}</span>
-          </div>
-          <div className="text-3xl font-bold text-white Staatliches">${totalInvestment}</div>
-        </div>
-
-        {/* 衛生評分 */}
-        <div className="p-4 bg-[#111] border-2 border-purple-500">
-          <div className="flex items-center gap-2 mb-2">
-            <i className="fas fa-pump-soap text-purple-400"></i>
-            <span className="text-xs text-[var(--text-secondary)] uppercase">{t.hygieneScore}</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="text-3xl font-bold text-white Staatliches">{hygieneScore}%</div>
-            <div className="flex-1 h-2 bg-gray-800 rounded-full overflow-hidden">
-              <div 
-                className="h-full bg-gradient-to-r from-purple-500 to-purple-300 transition-all"
-                style={{ width: `${hygieneScore}%` }}
-              />
-            </div>
-          </div>
-        </div>
+      <div className="grid grid-cols-2 gap-3">
+        <StatCard emoji="❤️" label={t.livesSaved}      value={livesSaved}           accent="#E85555" />
+        <StatCard emoji="🚽" label={t.toiletsBuilt}    value={toiletsBuilt}         accent="#5EAB78" />
+        <StatCard emoji="💰" label={t.totalInvestment} value={`$${totalInvestment}`} accent="#6BBF6A" />
+        <StatCard emoji="🧼" label={t.hygieneScore}    value={`${hygieneScore}%`}   accent="#C4A8E0" />
       </div>
 
-      {/* 影響力等級 */}
-      <div className="mt-6 p-4 bg-gradient-to-r from-[#111] to-[#1a1a1a] border-2 border-[#333]">
-        <div className="flex items-center justify-between">
-          <div>
-            <span className="text-xs text-[var(--text-secondary)] uppercase block mb-1">{t.impactLevel}</span>
-            <div className={`text-2xl font-bold Staatliches ${impactLevel.color}`}>
-              {impactLevel.level}
-            </div>
+      {/* Impact level */}
+      <div
+        style={{
+          marginTop: '1rem',
+          background: `${impactLevel.color}12`,
+          borderRadius: '1rem',
+          border: `2px solid ${impactLevel.color}30`,
+          padding: '0.875rem',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+        }}
+      >
+        <div>
+          <div style={{ fontSize: '0.65rem', color: '#9C7A6A', fontWeight: 700, textTransform: 'uppercase', marginBottom: 4 }}>
+            {t.impactLevel}
           </div>
-          <i className={`fas ${impactLevel.icon} text-5xl ${impactLevel.color} opacity-50`}></i>
-        </div>
-        
-        {/* 經驗進度條 */}
-        <div className="mt-4 h-1 bg-gray-800 rounded-full overflow-hidden">
-          <div 
-            className={`h-full transition-all ${impactLevel.color.replace('text-', 'bg-')}`}
-            style={{ 
-              width: `${Math.min(100, (toiletsBuilt * 10 + totalInvestment / 50))}%` 
+          <div
+            style={{
+              fontFamily: "'Baloo 2', sans-serif",
+              fontWeight: 800,
+              fontSize: '1.25rem',
+              color: impactLevel.color,
             }}
-          />
+          >
+            {impactLevel.level}
+          </div>
+        </div>
+        <span style={{ fontSize: '2.5rem', opacity: 0.6 }} className="sparkle-anim">
+          {impactLevel.emoji}
+        </span>
+      </div>
+
+      {/* Hygiene progress bar */}
+      <div className="mt-3">
+        <div className="impact-progress">
+          <div className="progress-bar" style={{ width: `${hygieneScore}%` }} />
         </div>
       </div>
     </div>

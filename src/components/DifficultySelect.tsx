@@ -11,41 +11,28 @@ interface DifficultySelectProps {
 
 const DIFFICULTY_INFO = {
   EASY: {
-    name: '简单',
-    description: '适合新手玩家',
-    details: [
-      '村民初始 HP: 120',
-      '无厕所村庄 HP 损失：-10',
-      '建造成本：-20%',
-    ],
-   color: 'text-green-400',
-    borderColor: 'border-green-600',
-    bgColor: 'bg-green-900/20',
+    name: '輕鬆',
+    emoji: '🌱',
+    description: '適合初次探索的旅人',
+    details: ['村民初始 HP: 120', '無廁村莊 HP 損失：-10', '建造成本：-20%'],
+    accent: '#6BBF6A',
+    bg: '#E8F5E9',
   },
   NORMAL: {
     name: '普通',
-    description: '标准游戏体验',
-    details: [
-      '村民初始 HP: 100',
-      '无厕所村庄 HP 损失：-15',
-      '建造成本：标准',
-    ],
-   color: 'text-[var(--construction-orange)]',
-    borderColor: 'border-[var(--construction-orange)]',
-    bgColor: 'bg-[var(--construction-orange)]/10',
+    emoji: '🏡',
+    description: '標準的柬埔寨之旅',
+    details: ['村民初始 HP: 100', '無廁村莊 HP 損失：-15', '建造成本：標準'],
+    accent: '#FF8C69',
+    bg: '#FFF3EE',
   },
   HARD: {
-    name: '困难',
-    description: '挑战性体验',
-    details: [
-      '村民初始 HP: 80',
-      '无厕所村庄 HP 损失：-20',
-      '建造成本：标准',
-      '获胜评分 x1.5',
-    ],
-   color: 'text-[var(--danger-red)]',
-    borderColor: 'border-[var(--danger-red)]',
-    bgColor: 'bg-[var(--danger-red)]/10',
+    name: '困難',
+    emoji: '⛈️',
+    description: '真實的困境挑戰',
+    details: ['村民初始 HP: 80', '無廁村莊 HP 損失：-20', '建造成本：標準', '影響力評分 ×1.5'],
+    accent: '#E85555',
+    bg: '#FFEAEA',
   },
 };
 
@@ -54,63 +41,91 @@ const DifficultySelect: React.FC<DifficultySelectProps> = ({
   onSelectDifficulty,
   onStartGame,
 }) => {
-  const t = zhTW;
-
   return (
-    <div className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-8">
-      <div className="panel-brutalist max-w-4xl w-full bg-[#111] border-4 border-[var(--construction-orange)] p-8">
-        <div className="text-center mb-8">
-          <h2 className="text-4xl text-white Staatliches mb-2">选择难度</h2>
-          <p className="text-[var(--text-secondary)]">选择适合你的游戏难度</p>
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 md:p-8"
+      style={{ background: 'rgba(92, 61, 46, 0.55)', backdropFilter: 'blur(8px)' }}
+    >
+      <div
+        className="bounce-in w-full max-w-2xl"
+        style={{
+          background: 'var(--ac-panel)',
+          borderRadius: '2rem',
+          padding: '2rem',
+          boxShadow: '0 20px 60px rgba(92, 61, 46, 0.25)',
+        }}
+      >
+        {/* Title */}
+        <div className="text-center mb-6">
+          <div style={{ fontSize: '3rem', marginBottom: '0.5rem' }}>🎮</div>
+          <h2
+            style={{
+              fontFamily: "'Baloo 2', sans-serif",
+              color: '#5C3D2E',
+              margin: 0,
+              fontSize: '1.75rem',
+            }}
+          >
+            THE WAY
+          </h2>
+          <p style={{ color: '#9C7A6A', margin: '0.25rem 0 0', fontSize: '0.875rem' }}>
+            柬埔寨廁所建設大挑戰 — 選擇難度
+          </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          {(Object.keys(DIFFICULTY_INFO) as Difficulty[]).map((difficulty) => {
-           const info = DIFFICULTY_INFO[difficulty];
-           const isSelected = selectedDifficulty === difficulty;
-
+        {/* Difficulty cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+          {(Object.keys(DIFFICULTY_INFO) as Difficulty[]).map((diff) => {
+            const info = DIFFICULTY_INFO[diff];
+            const isSelected = selectedDifficulty === diff;
             return (
               <button
-                key={difficulty}
-               onClick={() => onSelectDifficulty(difficulty)}
-                className={`
-                  p-6 border-2 transition-all text-left relative overflow-hidden
-                  ${isSelected 
-                    ? `${info.borderColor} ${info.bgColor}` 
-                    : 'border-[#333] hover:border-[#555]'
-                  }
-                `}
+                key={diff}
+                onClick={() => onSelectDifficulty(diff)}
+                style={{
+                  background: isSelected ? info.bg : 'var(--ac-cream)',
+                  borderRadius: '1.25rem',
+                  border: `3px solid ${isSelected ? info.accent : 'rgba(92, 61, 46, 0.12)'}`,
+                  padding: '1.25rem',
+                  textAlign: 'left',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s',
+                  transform: isSelected ? 'scale(1.04)' : 'scale(1)',
+                  boxShadow: isSelected ? `0 8px 24px ${info.accent}30` : '0 2px 8px rgba(92,61,46,0.08)',
+                  position: 'relative',
+                }}
               >
-                {/* 选中指示器 */}
                 {isSelected && (
-                  <div className={`absolute top-0 right-0 w-8 h-8 ${info.color.replace('text-', 'bg-')} flex items-center justify-center`}>
-                    <i className="fas fa-check text-black text-sm"></i>
+                  <div
+                    style={{
+                      position: 'absolute', top: 10, right: 10,
+                      background: info.accent, color: '#fff',
+                      borderRadius: '50%', width: 24, height: 24,
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      fontSize: '0.8rem',
+                    }}
+                  >
+                    ✓
                   </div>
                 )}
-
-                {/* 难度名称 */}
-                <div className="flex items-center gap-3 mb-4">
-                  <i className={`fas ${
-                    difficulty === 'EASY' ? 'fa-seedling' :
-                    difficulty === 'NORMAL' ? 'fa-road' :
-                    'fa-triangle-exclamation'
-                  } text-3xl ${info.color}`}></i>
-                  <div>
-                    <h3 className={`text-2xl font-bold Staatliches m-0 ${info.color}`}>
-                      {info.name}
-                    </h3>
-                    <p className="text-xs text-[var(--text-secondary)] m-0">
-                      {info.description}
-                    </p>
-                  </div>
-                </div>
-
-                {/* 难度详情 */}
-                <ul className="space-y-2">
-                  {info.details.map((detail, index) => (
-                    <li key={index} className="text-sm text-[var(--text-primary)] flex items-center gap-2">
-                      <i className={`fas fa-caret-right ${info.color}`}></i>
-                      {detail}
+                <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>{info.emoji}</div>
+                <h3
+                  style={{
+                    fontFamily: "'Baloo 2', sans-serif",
+                    color: info.accent,
+                    margin: '0 0 0.25rem',
+                    fontSize: '1.1rem',
+                  }}
+                >
+                  {info.name}
+                </h3>
+                <p style={{ color: '#9C7A6A', margin: '0 0 0.75rem', fontSize: '0.75rem' }}>
+                  {info.description}
+                </p>
+                <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+                  {info.details.map((d, i) => (
+                    <li key={i} style={{ fontSize: '0.72rem', color: '#5C3D2E', marginBottom: 4, display: 'flex', gap: 6 }}>
+                      <span style={{ color: info.accent }}>▸</span> {d}
                     </li>
                   ))}
                 </ul>
@@ -119,19 +134,18 @@ const DifficultySelect: React.FC<DifficultySelectProps> = ({
           })}
         </div>
 
-        {/* 开始按钮 */}
-        <div className="flex justify-center">
+        {/* Start button */}
+        <div className="flex flex-col items-center gap-3">
           <button
-           onClick={onStartGame}
-            className="btn-industrial px-12 py-4 text-xl"
+            onClick={onStartGame}
+            className="btn-cozy px-10 py-3 text-lg"
+            style={{ fontFamily: "'Baloo 2', sans-serif", fontSize: '1.1rem' }}
           >
-            <i className="fas fa-play"></i> 开始游戏
+            🎲 開始遊戲
           </button>
-        </div>
-
-        {/* 提示信息 */}
-        <div className="mt-6 text-center text-xs text-[var(--text-secondary)]">
-          <p>提示：困难难度通关可获得更高的影响力评分</p>
+          <p style={{ color: '#9C7A6A', fontSize: '0.75rem', textAlign: 'center' }}>
+            困難模式通關可獲得更高的影響力評分 🏆
+          </p>
         </div>
       </div>
     </div>

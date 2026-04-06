@@ -7,73 +7,127 @@ interface PlayerStatsProps {
   currentPlayerIndex: number;
 }
 
+const DONOR_COLORS  = ['#FF8C69', '#70C8E8', '#FFD166'];
+const DONOR_EMOJIS  = ['⭐', '💙', '🌟'];
+
+const HeartHP: React.FC<{ hp: number; maxHp?: number }> = ({ hp, maxHp = 100 }) => {
+  const pct = Math.max(0, Math.min(100, (hp / maxHp) * 100));
+  const color = pct > 60 ? '#6BBF6A' : pct > 30 ? '#FFB347' : '#E85555';
+  return (
+    <div className="w-full">
+      <div className="flex justify-between items-center mb-1">
+        <span style={{ color, fontWeight: 800, fontSize: '1.4rem', fontFamily: "'Baloo 2', sans-serif" }}>
+          {hp}
+        </span>
+        <span style={{ color: '#9C7A6A', fontSize: '0.7rem' }}>/ {maxHp} HP</span>
+      </div>
+      <div className="hp-gauge">
+        <div
+          className="hp-fill"
+          style={{
+            width: `${pct}%`,
+            background: `linear-gradient(90deg, ${color}99, ${color})`,
+          }}
+        />
+      </div>
+    </div>
+  );
+};
+
 const PlayerStats: React.FC<PlayerStatsProps> = ({ players, currentPlayerIndex }) => {
   const t = zhTW;
   const villager = players.find(p => p.role === 'VILLAGER')!;
-  const donors = players.filter(p => p.role.startsWith('DONOR'));
+  const donors    = players.filter(p => p.role.startsWith('DONOR'));
 
   return (
-    <div className="flex flex-col gap-6">
-      {/* Villager Status (Main HP Gauge) */}
-      <div className="panel-brutalist relative overflow-hidden bg-[#1a1a1a]">
-        <div className="flex justify-between items-end mb-4">
-          <div>
-            <h2 className="text-3xl text-[var(--construction-orange)] m-0 leading-none">{t.roles.VILLAGER}</h2>
-            <p className="text-[var(--text-secondary)] text-sm mt-1">{t.stats.lapsCompleted}: {villager.laps} / 5</p>
-          </div>
-          <div className="text-right">
-            <span className="text-4xl font-bold text-[var(--danger-red)] Staatliches">{villager.hp}</span>
-            <span className="text-sm text-[var(--text-secondary)] block">{t.stats.vitalityHP}</span>
-          </div>
-        </div>
-        
-        <div className="hp-gauge">
-          <div 
-            className="hp-fill" 
-            style={{ width: `${Math.min(100, Math.max(0, (villager.hp / 150) * 100))}%` }} 
-          />
-          {/* Gauge markers */}
-          <div className="absolute inset-0 flex justify-between pointer-events-none opacity-20">
-            {[...Array(10)].map((_, i) => (
-              <div key={i} className="w-[1px] h-full bg-white" />
-            ))}
-          </div>
-        </div>
-        
-        {villager.hp < 30 && (
-          <div className="mt-2 text-[var(--danger-red)] animate-pulse flex items-center gap-2">
-            <i className="fas fa-triangle-exclamation"></i>
-            <span className="text-xs font-bold uppercase">{t.stats.critical || '危急衛生條件!'}</span>
-          </div>
-        )}
-      </div>
-
-      {/* Donors List */}
-      <div className="grid grid-cols-3 gap-4">
-        {donors.map((donor, idx) => (
-          <div 
-            key={donor.id} 
-            className={`
-              p-4 border-2 transition-all
-              ${currentPlayerIndex === idx + 1 ? 'border-[var(--construction-orange)] bg-[#222]' : 'border-[#333] opacity-60'}
-            `}
+    <div className="flex flex-col gap-4">
+      {/* Villager card */}
+      <div className="panel-cozy">
+        <div className="flex items-start gap-4">
+          <div
+            style={{
+              width: 56, height: 56, borderRadius: '50%',
+              background: 'linear-gradient(135deg, #A8E6CF, #FFD6B0)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontSize: '1.8rem', flexShrink: 0,
+              border: '3px solid rgba(94, 171, 120, 0.3)',
+            }}
           >
-            <div className="flex justify-between items-start mb-2">
-              <span className="text-[10px] font-bold text-[var(--text-secondary)]">{t.roles[`DONOR_${idx + 1}` as keyof typeof t.roles]}</span>
-              {currentPlayerIndex === idx + 1 && (
-                <span className="text-[10px] bg-[var(--construction-orange)] text-black px-1 font-bold">{t.stats.active || '當前'}</span>
-              )}
+            🧕
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="flex justify-between items-center mb-1">
+              <h3 style={{ fontFamily: "'Baloo 2', sans-serif", color: '#5EAB78', margin: 0, fontSize: '1.1rem' }}>
+                {t.roles.VILLAGER}
+              </h3>
+              <span style={{ fontSize: '0.7rem', color: '#9C7A6A' }}>
+                {t.stats.lapsCompleted}: <strong style={{ color: '#5EAB78' }}>{villager.laps}</strong> / 5
+              </span>
             </div>
-            <div className="text-2xl font-bold Staatliches text-white">
-              ${donor.funds}
-            </div>
-            {donor.inPrison && (
-              <div className="mt-2 text-[var(--danger-red)] text-[10px] font-bold uppercase flex items-center gap-1">
-                <i className="fas fa-link"></i> {t.stats.inPrison}
+            <HeartHP hp={villager.hp} maxHp={120} />
+            {villager.hp < 30 && (
+              <div
+                className="mt-2 flex items-center gap-1 animate-pulse"
+                style={{ color: '#E85555', fontSize: '0.75rem', fontWeight: 700 }}
+              >
+                ⚠️ {t.stats.critical}
               </div>
             )}
           </div>
-        ))}
+        </div>
+      </div>
+
+      {/* Donor cards */}
+      <div className="grid grid-cols-3 gap-3">
+        {donors.map((donor, idx) => {
+          const isActive = currentPlayerIndex === idx + 1;
+          return (
+            <div
+              key={donor.id}
+              style={{
+                background: isActive ? `${DONOR_COLORS[idx]}18` : 'var(--ac-panel)',
+                borderRadius: '1rem',
+                border: `2px solid ${isActive ? DONOR_COLORS[idx] : 'rgba(110, 180, 130, 0.2)'}`,
+                padding: '0.75rem',
+                transition: 'all 0.2s',
+                opacity: isActive ? 1 : 0.65,
+              }}
+            >
+              <div className="flex justify-between items-start mb-2">
+                <span style={{ fontSize: '1.2rem' }}>{DONOR_EMOJIS[idx]}</span>
+                {isActive && (
+                  <span
+                    style={{
+                      fontSize: '0.6rem', fontWeight: 800, textTransform: 'uppercase',
+                      background: DONOR_COLORS[idx], color: '#fff',
+                      borderRadius: '999px', padding: '1px 6px',
+                    }}
+                  >
+                    當前
+                  </span>
+                )}
+              </div>
+              <div
+                style={{
+                  fontFamily: "'Baloo 2', sans-serif",
+                  fontWeight: 800,
+                  fontSize: '1.1rem',
+                  color: isActive ? DONOR_COLORS[idx] : '#5C3D2E',
+                }}
+              >
+                ${donor.funds}
+              </div>
+              <div style={{ fontSize: '0.6rem', color: '#9C7A6A', marginTop: 2 }}>
+                {t.roles[`DONOR_${idx + 1}` as keyof typeof t.roles]}
+              </div>
+              {donor.inPrison && (
+                <div style={{ fontSize: '0.65rem', color: '#E85555', fontWeight: 700, marginTop: 4 }}>
+                  😵 {t.stats.inPrison}
+                </div>
+              )}
+            </div>
+          );
+        })}
       </div>
     </div>
   );

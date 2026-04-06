@@ -4,449 +4,306 @@
 
 @layer base {
   :root {
-    --clay-red: #A0522D;
-    --construction-orange: #FF8C00;
-    --concrete-slate: #2F4F4F;
-    --vital-blue: #00CED1;
-    --danger-red: #DC143C;
-    --background: #1A1A1A;
-    --text-primary: #E0E0E0;
-    --text-secondary: #A0A0A0;
-    
-    font-family: 'Space Mono', monospace;
+    /* Animal Crossing palette */
+    --ac-bg:           #D4F0DC;
+    --ac-bg2:          #B8E5D0;
+    --ac-panel:        #FFFEF2;
+    --ac-panel-border: rgba(110, 180, 130, 0.25);
+    --ac-green:        #5EAB78;
+    --ac-green-light:  #88C9A0;
+    --ac-green-dark:   #3A7A55;
+    --ac-coral:        #FF8C69;
+    --ac-coral-dark:   #E0613A;
+    --ac-yellow:       #FFD166;
+    --ac-yellow-dark:  #F4A800;
+    --ac-sky:          #70C8E8;
+    --ac-sky-dark:     #3AAAC8;
+    --ac-pink:         #FFADC3;
+    --ac-purple:       #C4A8E0;
+    --ac-amber:        #FFA040;
+    --ac-brown:        #5C3D2E;
+    --ac-brown-mid:    #9C7A6A;
+    --ac-brown-light:  #C4A898;
+    --ac-cream:        #FFF8E8;
+    --ac-sand:         #F5E6C8;
+    --ac-grass:        #7EBF6A;
+    --ac-shadow:       rgba(92, 61, 46, 0.12);
+    --ac-shadow-deep:  rgba(92, 61, 46, 0.22);
+
+    /* Legacy aliases for compatibility */
+    --construction-orange: var(--ac-coral);
+    --vital-blue:          var(--ac-sky);
+    --danger-red:          #E85555;
+    --background:          var(--ac-bg);
+    --text-primary:        var(--ac-brown);
+    --text-secondary:      var(--ac-brown-mid);
+
+    font-family: 'Nunito', sans-serif;
   }
 
   body {
-    @apply bg-[var(--background)] text-[var(--text-primary)] overflow-x-hidden;
-    background-image: 
-      linear-gradient(rgba(255,140, 0, 0.05) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255, 140, 0, 0.05) 1px, transparent 1px);
-    background-size: 20px 20px;
+    @apply overflow-x-hidden;
+    background-color: var(--ac-bg);
+    background-image:
+      radial-gradient(circle at 20% 20%, rgba(140, 200, 130, 0.35) 0%, transparent 50%),
+      radial-gradient(circle at 80% 80%, rgba(110, 200, 232, 0.25) 0%, transparent 50%),
+      url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%235EAB78' fill-opacity='0.07'%3E%3Cellipse cx='10' cy='10' rx='3' ry='2'/%3E%3Cellipse cx='30' cy='30' rx='3' ry='2'/%3E%3Cellipse cx='30' cy='10' rx='2' ry='3'/%3E%3Cellipse cx='10' cy='30' rx='2' ry='3'/%3E%3C/g%3E%3C/svg%3E");
+    color: var(--ac-brown);
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Staatliches', sans-serif;
-    @apply uppercase tracking-wider;
+    font-family: 'Baloo 2', sans-serif;
+    font-weight: 700;
   }
 
-  ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-  }
-
-  ::-webkit-scrollbar-track {
-    @apply bg-[#1a1a1a];
-  }
-
-  ::-webkit-scrollbar-thumb {
-    @apply bg-[var(--construction-orange)] rounded;
-  }
-
-  ::-webkit-scrollbar-thumb:hover {
-    @apply bg-[#ff6600];
-  }
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-track { background: var(--ac-bg2); border-radius: 4px; }
+  ::-webkit-scrollbar-thumb { background: var(--ac-green-light); border-radius: 4px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--ac-green); }
 }
 
 @layer components {
-  .btn-industrial {
-    @apply px-6 py-2 border-2 border-[var(--construction-orange)] text-[var(--construction-orange)] 
-          hover:bg-[var(--construction-orange)] hover:text-black transition-all duration-300
-           font-bold uppercase flex items-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed;
-    clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%);
+
+  /* ── Buttons ── */
+  .btn-cozy {
+    @apply px-5 py-2 rounded-full font-bold flex items-center gap-2 cursor-pointer
+           transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed
+           select-none;
+    background: var(--ac-coral);
+    color: #fff;
+    box-shadow: 0 4px 0 var(--ac-coral-dark), 0 6px 12px rgba(255, 140, 105, 0.30);
+    font-family: 'Baloo 2', sans-serif;
+  }
+  .btn-cozy:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 0 var(--ac-coral-dark), 0 8px 16px rgba(255, 140, 105, 0.40);
+  }
+  .btn-cozy:active:not(:disabled) {
+    transform: translateY(2px);
+    box-shadow: 0 2px 0 var(--ac-coral-dark), 0 3px 6px rgba(255, 140, 105, 0.20);
   }
 
-  .btn-industrial-blue {
-    @apply px-6 py-2 border-2 border-[var(--vital-blue)] text-[var(--vital-blue)] 
-          hover:bg-[var(--vital-blue)] hover:text-black transition-all duration-300
-           font-bold uppercase flex items-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed;
-    clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%);
+  .btn-cozy-green {
+    @apply btn-cozy;
+    background: var(--ac-green);
+    box-shadow: 0 4px 0 var(--ac-green-dark), 0 6px 12px rgba(94, 171, 120, 0.30);
+    color: #fff;
+  }
+  .btn-cozy-green:hover:not(:disabled) {
+    box-shadow: 0 6px 0 var(--ac-green-dark), 0 8px 16px rgba(94, 171, 120, 0.40);
   }
 
-  .panel-brutalist {
-    @apply bg-[#222] border-l-4 border-[var(--construction-orange)] p-6 shadow-2xl relative;
-    box-shadow: 10px 10px 0px rgba(0, 0, 0, 0.5);
-    
-    &::before {
-     content: '';
-      position: absolute;
-     top: 0;
-      left: 0;
-      right: 0;
-      height: 1px;
-      background: linear-gradient(90deg, var(--construction-orange), transparent);
-      opacity: 0.5;
-    }
+  .btn-cozy-sky {
+    @apply btn-cozy;
+    background: var(--ac-sky);
+    box-shadow: 0 4px 0 var(--ac-sky-dark), 0 6px 12px rgba(112, 200, 232, 0.30);
+    color: #fff;
+  }
+  .btn-cozy-sky:hover:not(:disabled) {
+    box-shadow: 0 6px 0 var(--ac-sky-dark), 0 8px 16px rgba(112, 200, 232, 0.40);
   }
 
+  .btn-cozy-outline {
+    @apply px-5 py-2 rounded-full font-bold flex items-center gap-2 cursor-pointer
+           transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed
+           border-2 select-none;
+    border-color: var(--ac-green);
+    color: var(--ac-green);
+    background: transparent;
+    font-family: 'Baloo 2', sans-serif;
+  }
+  .btn-cozy-outline:hover:not(:disabled) {
+    background: var(--ac-green);
+    color: #fff;
+  }
+
+  /* Legacy aliases */
+  .btn-industrial       { @apply btn-cozy; }
+  .btn-industrial-blue  { @apply btn-cozy-sky; }
+
+  /* ── Panels ── */
+  .panel-cozy {
+    background: var(--ac-panel);
+    border-radius: 1.5rem;
+    border: 2px solid var(--ac-panel-border);
+    padding: 1.5rem;
+    box-shadow: 0 4px 24px var(--ac-shadow), 0 1px 4px rgba(255,255,255,0.8) inset;
+    position: relative;
+  }
+
+  /* Legacy alias */
+  .panel-brutalist { @apply panel-cozy; }
+
+  /* ── HP Gauge ── */
   .hp-gauge {
-    @apply h-6 bg-gray-800 border-2 border-gray-600 relative overflow-hidden rounded-sm;
-    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);
-    
-    &::after {
-     content: '';
-      position: absolute;
-     top: 0;
-      left: 0;
-      right: 0;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-    }
+    @apply h-5 relative overflow-hidden;
+    background: rgba(92, 61, 46, 0.12);
+    border-radius: 999px;
+    border: 2px solid rgba(92, 61, 46, 0.15);
   }
 
   .hp-fill {
-    @apply h-full transition-all duration-500 ease-in-out absolute top-0 left-0;
-    background: repeating-linear-gradient(
-      45deg,
-      var(--danger-red),
-      var(--danger-red) 10px,
-      #B22222 10px,
-      #B22222 20px
-    );
-    box-shadow: 0 0 10px rgba(220, 20, 60, 0.5);
-    
-    @keyframes hp-low-pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.7; }
-    }
-    
-    .critical & {
-      animation: hp-low-pulse 1s infinite;
-    }
+    @apply h-full absolute top-0 left-0 transition-all duration-500;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #E85555 0%, #FFB347 50%, #6BBF6A 100%);
+    background-size: 200% 100%;
+  }
+  /* Shift gradient left for low HP, right for high HP */
+  .hp-fill { background-position: calc(100% - var(--hp-pos, 50%)) 0; }
+
+  /* ── Board ── */
+  .board-wrapper {
+    background: var(--ac-grass);
+    border-radius: 2rem;
+    padding: 0.75rem;
+    box-shadow: 0 8px 32px var(--ac-shadow-deep);
+    border: 4px solid #5A9E48;
   }
 
-  .chance-card-modal {
-    @apply fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-8;
-    
-    .chance-card {
-      @apply max-w-md w-full panel-brutalist bg-[#111] border-4 border-[var(--construction-orange)] p-8 text-center;
-      animation: card-slide-in 0.3s ease-out;
-    }
+  .board-tile-base {
+    @apply relative flex flex-col items-center justify-between transition-all duration-200;
+    background: var(--ac-sand);
+    border-radius: 0.875rem;
+    border: 2px solid rgba(92, 61, 46, 0.15);
+    padding: 0.375rem;
+    cursor: default;
+  }
+  .board-tile-base:hover { transform: scale(1.06); z-index: 10; }
+
+  .tile-start    { background: #A8E6CF; border-color: #5EAB78; }
+  .tile-prison   { background: #FFD6D6; border-color: #E85555; }
+  .tile-chance   { background: #FFF3CC; border-color: #FFD166; }
+  .tile-village  { background: var(--ac-sand); }
+  .tile-upgraded { background: #D4F0DC; border-color: var(--ac-green); }
+
+  /* ── Game Log ── */
+  .game-log-cozy {
+    background: var(--ac-cream);
+    border-radius: 1.25rem;
+    border: 2px solid var(--ac-panel-border);
+    padding: 1rem;
+    overflow-y: auto;
+    max-height: 260px;
+    box-shadow: inset 0 2px 8px var(--ac-shadow);
   }
 
-  @keyframes card-slide-in {
-    from {
-      transform: translateY(-50px);
-      opacity: 0;
-    }
-   to {
-      transform: translateY(0);
-      opacity: 1;
-    }
+  .log-bubble {
+    @apply text-sm rounded-2xl px-3 py-2 mb-2;
+    background: rgba(94, 171, 120, 0.12);
+    border-left: 3px solid var(--ac-green-light);
+    color: var(--ac-brown);
+    font-family: 'Nunito', sans-serif;
+  }
+  .log-bubble:first-child {
+    background: rgba(255, 140, 105, 0.12);
+    border-left-color: var(--ac-coral);
+    font-weight: 700;
   }
 
-  .tutorial-step {
-    @apply transition-all duration-300;
-    animation: fade-in-up 0.5s ease-out;
+  /* ── Achievement notification ── */
+  @keyframes achievement-slide-in {
+    0%   { transform: translateX(110%) rotate(-8deg); opacity: 0; }
+    65%  { transform: translateX(-8px) rotate(3deg); opacity: 1; }
+    100% { transform: translateX(0) rotate(0deg); opacity: 1; }
+  }
+  .achievement-notification {
+    animation: achievement-slide-in 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+    background: var(--ac-panel);
+    border-radius: 1rem;
+    box-shadow: 0 8px 32px var(--ac-shadow-deep);
+    border: 2px solid var(--ac-yellow);
   }
 
-  @keyframes fade-in-up {
-    from {
-      transform: translateY(20px);
-      opacity: 0;
-    }
-   to {
-      transform: translateY(0);
-      opacity: 1;
-    }
-  }
-
+  /* ── Impact progress ── */
   .impact-progress {
-    @apply h-2 bg-gray-800 rounded-full overflow-hidden;
-    
+    @apply h-2 rounded-full overflow-hidden;
+    background: rgba(92, 61, 46, 0.12);
     .progress-bar {
-      @apply h-full transition-all duration-500;
-      background: linear-gradient(90deg, var(--vital-blue), var(--construction-orange));
+      @apply h-full transition-all duration-500 rounded-full;
+      background: linear-gradient(90deg, var(--ac-green), var(--ac-sky));
     }
   }
 
-  .board-tile {
-    @apply relative flex flex-col items-center justify-between p-2 border-2 transition-all duration-300;
-    
-    &:hover {
-      transform: scale(1.05);
-      z-index: 10;
-    }
-    
-    &.start {
-      @apply bg-[var(--vital-blue)] text-black border-white;
-    }
-    
-    &.chance {
-      @apply border-[var(--construction-orange)];
-    }
-    
-    &.prison {
-      @apply border-[var(--danger-red)];
-    }
+  /* ── Dignity Card ── */
+  .dignity-card {
+    background: var(--ac-panel);
+    border-radius: 1.5rem;
+    padding: 1.5rem;
+    box-shadow: 0 6px 24px var(--ac-shadow-deep);
+    border: 3px solid transparent;
+    transition: transform 0.2s;
+    cursor: pointer;
+  }
+  .dignity-card:hover { transform: translateY(-4px); }
+  .dignity-card.menstruation { border-color: var(--ac-pink); }
+  .dignity-card.harassment   { border-color: var(--ac-purple); }
+  .dignity-card.safety       { border-color: var(--ac-amber); }
+
+  /* ── CTA Banner ── */
+  .cta-banner {
+    background: linear-gradient(135deg, var(--ac-green) 0%, var(--ac-sky) 100%);
+    border-radius: 1.5rem;
+    padding: 1.5rem;
+    color: #fff;
+    box-shadow: 0 8px 32px rgba(94, 171, 120, 0.35);
   }
 
-  .player-token {
-    @apply w-6 h-6 rounded-full border-2 border-black flex items-center justify-center text-[10px] font-bold shadow-lg;
-    transition: all 0.3s ease;
-    
-    &:hover {
-      transform: scale(1.2);
-    }
-    
-    &.villager {
-      @apply bg-green-500;
-    }
-    
-    &.donor {
-      @apply bg-[var(--construction-orange)];
-    }
+  /* ── Animations ── */
+  @keyframes float-up {
+    0%   { transform: translateY(0); }
+    50%  { transform: translateY(-6px); }
+    100% { transform: translateY(0); }
   }
+  .float-anim { animation: float-up 3s ease-in-out infinite; }
 
-  .build-button {
-    @apply p-3 border-2 border-[#444] hover:border-[var(--vital-blue)] text-left group transition-all cursor-pointer
-           disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:border-[#444];
-    
-    &:not(:disabled):hover {
-      @apply bg-[#1a1a1a];
-    }
-    
-    .toilet-icon {
-      @apply opacity-0 group-hover:opacity-100 transition-all text-[var(--vital-blue)] font-bold uppercase text-[10px];
-    }
+  @keyframes bounce-in {
+    0%   { transform: scale(0.5); opacity: 0; }
+    70%  { transform: scale(1.1); opacity: 1; }
+    100% { transform: scale(1); }
   }
+  .bounce-in { animation: bounce-in 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards; }
 
-  .game-log {
-    @apply bg-black/50 border-2 border-[#333] p-4 font-mono text-sm overflow-y-auto;
-    max-height: 300px;
-    
-    .log-entry {
-      @apply text-[var(--text-primary)] animate-in fade-in slide-in-from-left duration-500;
-      
-      .log-prefix {
-        @apply text-[var(--construction-orange)] mr-2;
-      }
-    }
+  @keyframes sparkle {
+    0%, 100% { transform: scale(1) rotate(0deg);   opacity: 1; }
+    50%       { transform: scale(1.3) rotate(15deg); opacity: 0.8; }
   }
+  .sparkle-anim { animation: sparkle 2s ease-in-out infinite; }
 
-  .status-badge {
-    @apply text-[10px] px-2 py-1 font-bold uppercase;
-    
-    &.active {
-      @apply bg-[var(--construction-orange)] text-black;
-    }
-    
-    &.prison {
-      @apply bg-[var(--danger-red)] text-white;
-    }
-    
-    &.critical {
-      @apply bg-[var(--danger-red)] text-white animate-pulse;
-    }
+  @keyframes card-flip {
+    0%   { transform: rotateY(-90deg); opacity: 0; }
+    100% { transform: rotateY(0deg);   opacity: 1; }
   }
+  .card-flipping { animation: card-flip 0.4s ease-out; }
 
-  /* 響應式調整 */
-  @media (max-width: 1024px) {
-    .panel-brutalist {
-      padding: 1.5rem;
-    }
-    
-    .btn-industrial {
-      @apply text-sm px-4 py-2;
-    }
+  @keyframes end-game-zoom {
+    0%   { transform: scale(0.8); opacity: 0; }
+    100% { transform: scale(1);   opacity: 1; }
   }
-  
+  .end-game-panel { animation: end-game-zoom 0.5s ease-out; }
+
+  @keyframes dice-roll {
+    0%, 100% { transform: rotate(0deg)   scale(1); }
+    25%       { transform: rotate(90deg)  scale(1.1); }
+    50%       { transform: rotate(180deg) scale(1); }
+    75%       { transform: rotate(270deg) scale(1.1); }
+  }
+  .dice-rolling { animation: dice-roll 0.1s ease-in-out infinite; }
+
+  @keyframes hp-float-up {
+    0%   { transform: translateY(0) scale(1);   opacity: 1; }
+    100% { transform: translateY(-30px) scale(1.5); opacity: 0; }
+  }
+  .hp-float  { animation: hp-float-up 1s ease-out forwards; }
+
+  @keyframes hp-float-down {
+    0%   { transform: translateY(0) scale(1);   opacity: 1; }
+    100% { transform: translateY(30px) scale(1.5); opacity: 0; }
+  }
+  .hp-damage { animation: hp-float-down 1s ease-out forwards; }
+
+  /* ── Responsive ── */
   @media (max-width: 768px) {
-    body {
-      font-size: 14px;
-    }
-    
-   h1 {
-      font-size: 2.5rem !important;
-    }
-    
-    header {
-      @apply flex-col items-center gap-4 text-center mb-6;
-    }
-    
-    .grid-cols-12 {
-      display: block;
-    }
-    
-    .col-span-12 {
-      width: 100%;
-    }
-    
-    .flex-gap {
-      @apply flex-col gap-2;
-    }
-    
-    .btn-industrial, .btn-industrial-blue {
-      width: 100%;
-      justify-content: center;
-    }
+    .panel-cozy { padding: 1rem; border-radius: 1.25rem; }
+    h1 { font-size: 2rem !important; }
   }
-  
-  @media (max-width: 480px) {
-    body {
-      padding: 0.5rem;
-      background-size: 15px 15px;
-    }
-    
-    h1 {
-      font-size: 2rem !important;
-    }
-    
-    .text-xl {
-      @apply text-base;
-    }
-    
-    .achievement-notification {
-      @apply min-w-[280px] p-4;
-    }
-    
-    .player-token {
-      @apply w-4 h-4 text-xs;
-    }
-  }
-  
-  @media (hover: none) and (pointer: coarse) {
-    button {
-      min-height: 44px;
-    }
-    
-    .board-tile {
-     touch-action: manipulation;
-    }
-  }
-}
-
-/* 工具提示 */
-.tooltip {
-  @apply relative;
-  
-  &::after {
-   content: attr(data-tooltip);
-    @apply absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-black text-white text-xs whitespace-nowrap opacity-0 pointer-events-none transition-opacity;
-  }
-  
-  &:hover::after {
-    @apply opacity-100;
-  }
-}
-
-/* 階段二：新增動畫效果 */
-
-/* 骰子滾動動畫 */
-@keyframes dice-roll {
-  0%, 100% { transform: rotate(0deg) scale(1); }
-  25% { transform: rotate(90deg) scale(1.1); }
-  50% { transform: rotate(180deg) scale(1); }
-  75% { transform: rotate(270deg) scale(1.1); }
-}
-
-.dice-rolling {
-  animation: dice-roll 0.1s ease-in-out infinite;
-}
-
-/* 玩家移動腳步動畫 */
-@keyframes player-step {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-5px); }
-}
-
-.player-moving {
-  animation: player-step 0.3s ease-in-out;
-}
-
-/* 建造廁所動畫 */
-@keyframes hammer-swing {
-  0%, 100% { transform: rotate(0deg); }
-  30% { transform: rotate(-45deg); }
-  60% { transform: rotate(45deg); }
-}
-
-.hammer-animating {
-  animation: hammer-swing 0.2s ease-in-out;
-}
-
-@keyframes toilet-build {
-  0% { transform: scale(0) rotate(-180deg); opacity: 0; }
- 70% { transform: scale(1.2) rotate(10deg); opacity: 0.8; }
-  100% { transform: scale(1) rotate(0deg); opacity: 1; }
-}
-
-.toilet-building {
-  animation: toilet-build 0.6s cubic-bezier(0.68, -0.55, 0.265,1.55);
-}
-
-/* HP 變化浮動數字動畫 */
-@keyframes hp-float-up {
-  0% { transform: translateY(0) scale(1); opacity: 1; }
-  100% { transform: translateY(-30px) scale(1.5); opacity: 0; }
-}
-
-.hp-float {
-  animation: hp-float-up 1s ease-out forwards;
-}
-
-@keyframes hp-float-down {
-  0% { transform: translateY(0) scale(1); opacity: 1; }
-  100% { transform: translateY(30px) scale(1.5); opacity: 0; }
-}
-
-.hp-damage {
-  animation: hp-float-down 1s ease-out forwards;
-}
-
-/* 低 HP 警告閃爍 */
-@keyframes warning-pulse {
-  0%, 100% { box-shadow: 0 0 5px var(--danger-red); }
-  50% { box-shadow: 0 0 20px var(--danger-red), 0 0 30px var(--danger-red); }
-}
-
-.hp-critical {
-  animation: warning-pulse 1s infinite;
-}
-
-/* 成就解鎖通知 */
-@keyframes achievement-slide-in {
-  0% { transform: translateX(100%) rotate(-10deg); opacity: 0; }
-  70% { transform: translateX(-10px) rotate(5deg); opacity: 1; }
-  100% { transform: translateX(0) rotate(0deg); opacity: 1; }
-}
-
-.achievement-notification {
-  animation: achievement-slide-in 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-}
-
-/* 勝利/失敗結束畫面 */
-@keyframes end-game-zoom {
-  0% { transform: scale(0.8); opacity: 0; }
-  100% { transform: scale(1); opacity: 1; }
-}
-
-.end-game-panel {
-  animation: end-game-zoom 0.5s ease-out;
-}
-
-/* 機會卡片翻開效果 */
-@keyframes card-flip {
-  0% { transform: rotateY(-90deg); opacity: 0; }
-  100% { transform: rotateY(0deg); opacity: 1; }
-}
-
-.card-flipping {
-  animation: card-flip 0.4s ease-out;
-}
-
-/* 粒子效果容器 */
-.particle-container {
-  position: relative;
-  overflow: visible;
-}
-
-@keyframes particle-burst {
-  0% { transform: translate(0, 0) scale(1); opacity: 1; }
-  100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; }
-}
-
-.particle {
-  position: absolute;
-  pointer-events: none;
-  animation: particle-burst 0.6s ease-out forwards;
 }
