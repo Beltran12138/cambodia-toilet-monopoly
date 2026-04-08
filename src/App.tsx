@@ -438,7 +438,7 @@ const App: React.FC = () => {
           </p>
         </div>
 
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+        <div className="header-btn-row" style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
           <button
             onClick={() => { soundManager.play('click'); setShowDignityCards(true); }}
             className="btn-cozy"

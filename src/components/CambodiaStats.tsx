@@ -50,20 +50,20 @@ const CambodiaStats: React.FC<CambodiaStatsProps> = ({ toiletsBuilt, totalInvest
               真實統計數據
             </h4>
             <div className="grid grid-cols-2 gap-3">
-              <div className="p-3 bg-[#111] border border-[#333]">
-                <div className="text-xs text-[var(--text-secondary)] uppercase">農村露天排便</div>
+              <div className="p-3 rounded-xl" style={{ background: 'var(--ac-sand)', border: '1.5px solid rgba(92,61,46,0.15)' }}>
+                <div className="text-xs uppercase" style={{ color: 'var(--ac-brown-mid)', fontWeight: 600 }}>農村露天排便</div>
                 <div className="text-2xl font-bold text-[var(--danger-red)]">{realStats.ruralOpenDefecation}</div>
               </div>
-              <div className="p-3 bg-[#111] border border-[#333]">
-                <div className="text-xs text-[var(--text-secondary)] uppercase">城市露天排便</div>
+              <div className="p-3 rounded-xl" style={{ background: 'var(--ac-sand)', border: '1.5px solid rgba(92,61,46,0.15)' }}>
+                <div className="text-xs uppercase" style={{ color: 'var(--ac-brown-mid)', fontWeight: 600 }}>城市露天排便</div>
                 <div className="text-2xl font-bold text-[var(--vital-blue)]">{realStats.urbanOpenDefecation}</div>
               </div>
-              <div className="p-3 bg-[#111] border border-[#333]">
-                <div className="text-xs text-[var(--text-secondary)] uppercase">安全衛生設施</div>
+              <div className="p-3 rounded-xl" style={{ background: 'var(--ac-sand)', border: '1.5px solid rgba(92,61,46,0.15)' }}>
+                <div className="text-xs uppercase" style={{ color: 'var(--ac-brown-mid)', fontWeight: 600 }}>安全衛生設施</div>
                 <div className="text-2xl font-bold text-[var(--construction-orange)]">{realStats.safelyManagedSanitation}</div>
               </div>
-              <div className="p-3 bg-[#111] border border-[#333]">
-                <div className="text-xs text-[var(--text-secondary)] uppercase">學校衛生設施</div>
+              <div className="p-3 rounded-xl" style={{ background: 'var(--ac-sand)', border: '1.5px solid rgba(92,61,46,0.15)' }}>
+                <div className="text-xs uppercase" style={{ color: 'var(--ac-brown-mid)', fontWeight: 600 }}>學校衛生設施</div>
                 <div className="text-2xl font-bold text-[var(--danger-red)]">{realStats.schoolsWithSanitation}</div>
               </div>
             </div>
@@ -82,7 +82,7 @@ const CambodiaStats: React.FC<CambodiaStatsProps> = ({ toiletsBuilt, totalInvest
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm text-[var(--text-secondary)]">衛生意識提升</span>
-                <div className="flex-1 mx-3 h-2 bg-gray-800 rounded-full overflow-hidden">
+                <div className="flex-1 mx-3 h-2 rounded-full overflow-hidden" style={{ background: 'rgba(92,61,46,0.12)' }}>
                   <div 
                     className="h-full bg-[var(--vital-blue)] transition-all"
                     style={{ width: `${gameImpact.hygieneAwareness}%` }}
@@ -92,7 +92,7 @@ const CambodiaStats: React.FC<CambodiaStatsProps> = ({ toiletsBuilt, totalInvest
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm text-[var(--text-secondary)]">社區健康</span>
-                <div className="flex-1 mx-3 h-2 bg-gray-800 rounded-full overflow-hidden">
+                <div className="flex-1 mx-3 h-2 rounded-full overflow-hidden" style={{ background: 'rgba(92,61,46,0.12)' }}>
                   <div 
                     className="h-full bg-[var(--construction-orange)] transition-all"
                     style={{ width: `${gameImpact.communityHealth}%` }}

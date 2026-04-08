@@ -305,5 +305,39 @@
   @media (max-width: 768px) {
     .panel-cozy { padding: 1rem; border-radius: 1.25rem; }
     h1 { font-size: 2rem !important; }
+
+    .board-wrapper { padding: 0.5rem; border-radius: 1.5rem; }
+    .game-log-cozy { max-height: 200px; }
+
+    /* Header buttons: horizontal scroll instead of wrapping */
+    .header-btn-row {
+      flex-wrap: nowrap !important;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      padding-bottom: 4px;
+    }
+    .header-btn-row::-webkit-scrollbar { display: none; }
+    .header-btn-row > button { flex-shrink: 0; }
+
+    /* DifficultySelect modal padding */
+    .bounce-in[class*="max-w-2xl"] { padding: 1.5rem !important; }
+  }
+
+  @media (max-width: 480px) {
+    .panel-cozy { padding: 0.75rem; border-radius: 1rem; }
+    .board-wrapper { padding: 0.375rem; border-radius: 1rem; border-width: 3px; }
+    .game-log-cozy { max-height: 160px; }
+    .board-wrapper .gap-1 { gap: 2px !important; }
+
+    /* Compact buttons */
+    .btn-cozy, .btn-cozy-green, .btn-cozy-sky, .btn-cozy-outline {
+      padding: 0.4rem 0.6rem;
+      font-size: 0.8rem;
+      gap: 0.25rem;
+    }
+
+    /* Dignity cards modal */
+    .dignity-card { padding: 1rem; border-radius: 1.25rem; }
   }
 }
