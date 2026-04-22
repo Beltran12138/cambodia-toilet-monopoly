@@ -326,6 +326,7 @@ const App: React.FC = () => {
     loadGame,
     resetGame,
     toiletsBuilt,
+    schoolDaysSaved,
     totalInvestment,
     hasRolled,
     hasActed,
@@ -492,6 +493,7 @@ const App: React.FC = () => {
 
           <ImpactDashboard
             toiletsBuilt={toiletsBuilt}
+            schoolDaysSaved={schoolDaysSaved}
             totalInvestment={totalInvestment}
             villagerHP={players.find(p => p.role === 'VILLAGER')?.hp || 100}
             lapsCompleted={players.find(p => p.role === 'VILLAGER')?.laps || 0}

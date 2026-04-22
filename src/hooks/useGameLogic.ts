@@ -28,7 +28,7 @@ export interface Tile {
   id: number;
   name: string;
   nameZh: string;
-  type: 'VILLAGE' | 'CHANCE' | 'PRISON' | 'START';
+  type: 'VILLAGE' | 'SCHOOL' | 'CHANCE' | 'PRISON' | 'START';
   toiletType: 'NONE' | 'SMALL' | 'LARGE';
   priceSmall: number;
   priceLarge: number;
@@ -76,20 +76,25 @@ const VILLAGE_NAMES = [
   '特本克蒙村 (Tboung Khmum)', '白馬村 (Kep)',
 ];
 
+const SCHOOL_POSITIONS = new Set([3, 11, 19]); // 3 schools evenly spaced around board
+const SCHOOL_NAMES = ['暹粒小學 (Siem Reap Primary)', '磅湛中學 (Kampong Cham Secondary)', '菩薩女子學校 (Pursat Girls School)'];
+
 const INITIAL_TILES: Tile[] = Array.from({ length: BOARD_SIZE }, (_, i) => {
   if (i === 0) return { id: i, name: 'START', nameZh: t.tileTypes.START, type: 'START', toiletType: 'NONE', priceSmall: 0, priceLarge: 0 };
   if (i === 6) return { id: i, name: 'PRISON', nameZh: t.tileTypes.PRISON, type: 'PRISON', toiletType: 'NONE', priceSmall: 0, priceLarge: 0 };
   if (i % 4 === 0) return { id: i, name: 'CHANCE', nameZh: t.tileTypes.CHANCE, type: 'CHANCE', toiletType: 'NONE', priceSmall: 0, priceLarge: 0 };
-  
-  const villageIndex = Math.floor(i / 4) * 5 + (i % 4);
-  return { 
-  id: i, 
-    name: `VILLAGE ${i}`, 
+  if (SCHOOL_POSITIONS.has(i)) {
+    const idx = [...SCHOOL_POSITIONS].indexOf(i);
+    return { id: i, name: `SCHOOL ${i}`, nameZh: SCHOOL_NAMES[idx] || `學校 ${i}`, type: 'SCHOOL', toiletType: 'NONE', priceSmall: 250, priceLarge: 600 };
+  }
+  return {
+    id: i,
+    name: `VILLAGE ${i}`,
     nameZh: VILLAGE_NAMES[i % VILLAGE_NAMES.length] || `村莊 ${i}`,
-    type: 'VILLAGE', 
-  toiletType: 'NONE', 
-    priceSmall: 200, 
-    priceLarge: 500 
+    type: 'VILLAGE',
+    toiletType: 'NONE',
+    priceSmall: 200,
+    priceLarge: 500,
   };
 });
 
@@ -111,6 +116,7 @@ interface UseGameLogicReturn {
   loadGame: () => Promise<void>;
   resetGame: () => void;
   toiletsBuilt: number;
+  schoolDaysSaved: number;
   totalInvestment: number;
   hasRolled: boolean;
   hasActed: boolean;
@@ -153,8 +159,10 @@ export const useGameLogic = (): UseGameLogicReturn => {
     };
   });
 
-  // 计算当前厕所建造数和总投资（移到前面避免引用错误）
-  const toiletsBuilt = tiles.filter(t => t.type === 'VILLAGE' && t.toiletType !== 'NONE').length;
+  // 计算当前厕所建造数、学校天数和总投资
+  const toiletsBuilt = tiles.filter(t => (t.type === 'VILLAGE' || t.type === 'SCHOOL') && t.toiletType !== 'NONE').length;
+  const schoolDaysSaved = tiles.filter(t => t.type === 'SCHOOL' && t.toiletType !== 'NONE')
+    .reduce((sum, t) => sum + (t.toiletType === 'LARGE' ? 120 : 60), 0);
   const initialFunds = 3000;
   const currentFunds = players.filter(p => p.role.startsWith('DONOR')).reduce((sum, p) => sum + p.funds, 0);
   const totalInvestment = initialFunds - currentFunds;
@@ -244,15 +252,26 @@ export const useGameLogic = (): UseGameLogicReturn => {
       if (tile.type === 'VILLAGE') {
         if (tile.toiletType === 'NONE') {
           player.hp -= settings.hpLossNoToilet;
-            eventMessage = t.events.noToilet.replace('{name}', tile.nameZh);
-          } else if (tile.toiletType === 'SMALL') {
+          eventMessage = t.events.noToilet.replace('{name}', tile.nameZh);
+        } else if (tile.toiletType === 'SMALL') {
           player.hp += 5;
-            eventMessage = t.events.smallToilet.replace('{name}', tile.nameZh);
-          } else if (tile.toiletType === 'LARGE') {
+          eventMessage = t.events.smallToilet.replace('{name}', tile.nameZh);
+        } else if (tile.toiletType === 'LARGE') {
           player.hp += 15;
-            eventMessage = t.events.largeToilet.replace('{name}', tile.nameZh);
-          }
+          eventMessage = t.events.largeToilet.replace('{name}', tile.nameZh);
         }
+      } else if (tile.type === 'SCHOOL') {
+        if (tile.toiletType === 'NONE') {
+          player.hp -= Math.floor(settings.hpLossNoToilet * 1.33); // schools hurt more
+          eventMessage = t.events.schoolNoToilet.replace('{name}', tile.nameZh);
+        } else if (tile.toiletType === 'SMALL') {
+          player.hp += 8;
+          eventMessage = t.events.schoolSmallToilet.replace('{name}', tile.nameZh);
+        } else if (tile.toiletType === 'LARGE') {
+          player.hp += 20;
+          eventMessage = t.events.schoolLargeToilet.replace('{name}', tile.nameZh);
+        }
+      }
       } else {
       if (tile.type === 'PRISON') {
         player.inPrison = true;
@@ -335,7 +354,7 @@ export const useGameLogic = (): UseGameLogicReturn => {
       }
     if (eventEffect.updates.freeToilet && player.role.startsWith('DONOR')) {
       const currentTile = tiles[player.position];
-      if (currentTile.type === 'VILLAGE' && currentTile.toiletType === 'NONE') {
+      if ((currentTile.type === 'VILLAGE' || currentTile.type === 'SCHOOL') && currentTile.toiletType === 'NONE') {
         setTiles((prev) => {
           const next = [...prev];
             next[player.position] = { ...next[player.position], toiletType: 'SMALL' };
@@ -375,7 +394,7 @@ export const useGameLogic = (): UseGameLogicReturn => {
      setTiles((prev) => {
        const next = [...prev];
        const tile = next[eventEffect.updates.destroyToiletTile];
-       if (tile && tile.type === 'VILLAGE') {
+       if (tile && (tile.type === 'VILLAGE' || tile.type === 'SCHOOL')) {
             next[eventEffect.updates.destroyToiletTile] = { ...tile, toiletType: 'NONE' };
           }
          return next;
@@ -476,6 +495,7 @@ export const useGameLogic = (): UseGameLogicReturn => {
   loadGame,
    resetGame,
   toiletsBuilt,
+  schoolDaysSaved,
   totalInvestment,
     hasRolled,
     hasActed,

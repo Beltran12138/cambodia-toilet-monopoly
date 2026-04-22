@@ -175,6 +175,7 @@
   .tile-chance   { background: #FFF3CC; border-color: #FFD166; }
   .tile-village  { background: var(--ac-sand); }
   .tile-upgraded { background: #D4F0DC; border-color: var(--ac-green); }
+  .tile-school   { background: #E8EEFF; border-color: #7B9FE8; border-width: 2px; }
 
   /* ── Game Log ── */
   .game-log-cozy {

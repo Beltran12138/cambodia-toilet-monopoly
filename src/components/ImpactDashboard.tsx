@@ -3,6 +3,7 @@ import { zhTW } from '../locales/zh-TW';
 
 interface ImpactDashboardProps {
   toiletsBuilt: number;
+  schoolDaysSaved: number;
   totalInvestment: number;
   villagerHP: number;
   lapsCompleted: number;
@@ -44,6 +45,7 @@ const StatCard: React.FC<{
 
 const ImpactDashboard: React.FC<ImpactDashboardProps> = ({
   toiletsBuilt,
+  schoolDaysSaved,
   totalInvestment,
   villagerHP,
   lapsCompleted,
@@ -84,6 +86,8 @@ const ImpactDashboard: React.FC<ImpactDashboardProps> = ({
         <StatCard emoji="🚽" label={t.toiletsBuilt}    value={toiletsBuilt}         accent="#5EAB78" />
         <StatCard emoji="💰" label={t.totalInvestment} value={`$${totalInvestment}`} accent="#6BBF6A" />
         <StatCard emoji="🧼" label={t.hygieneScore}    value={`${hygieneScore}%`}   accent="#C4A8E0" />
+        <StatCard emoji="🎓" label="女童學習天數保全"    value={schoolDaysSaved}      accent="#7B9FE8" />
+        <StatCard emoji="📈" label="女童出席率提升"      value={schoolDaysSaved > 0 ? '+31%' : '0%'} accent="#FF8C69" />
       </div>
 
       {/* Impact level */}

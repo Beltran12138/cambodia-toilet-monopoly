@@ -25,6 +25,7 @@ export const zhTW = {
     PRISON: '監獄',
     CHANCE: '機會',
     VILLAGE: '村莊',
+    SCHOOL: '學校',
   },
   
   // 廁所類型
@@ -81,6 +82,9 @@ export const zhTW = {
     noToilet: '村民在{name}沒有廁所！HP -15。',
     smallToilet: '村民在{name}有小型廁所。HP +5。',
     largeToilet: '村民在{name}有大型廁所。HP +15。',
+    schoolNoToilet: '🎓 {name}學校無廁所！女童缺課，村民 HP -20。',
+    schoolSmallToilet: '🎓 {name}學校有廁所。女童留校！HP +8，保全 60 天學習。',
+    schoolLargeToilet: '🎓 {name}學校有完整廁所設施。升學率↑！HP +20，保全 120 天學習。',
     donorPrison: '捐贈者{role}進入監獄！',
     overseasDonation: '收到海外捐助！資金 +200。',
   constructionCostIncrease: '建築成本增加！資金 -100。',

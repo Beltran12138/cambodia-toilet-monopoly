@@ -10,11 +10,15 @@ const PLAYER_COLORS = ['#FF8C69', '#70C8E8', '#FFD166', '#C4A8E0'];
 const PLAYER_EMOJIS = ['🏠', '⭐', '🌸', '🎪'];
 
 const getTileDisplay = (tile: Tile) => {
-  if (tile.type === 'START')   return { icon: '✈️', label: '出發', extra: 'tile-start' };
-  if (tile.type === 'PRISON')  return { icon: '😵', label: '困境', extra: 'tile-prison' };
-  if (tile.type === 'CHANCE')  return { icon: '🎲', label: '機會', extra: 'tile-chance' };
-  if (tile.toiletType === 'LARGE')  return { icon: '🚿', label: tile.nameZh || tile.name, extra: 'tile-upgraded' };
-  if (tile.toiletType === 'SMALL')  return { icon: '🚽', label: tile.nameZh || tile.name, extra: 'tile-upgraded' };
+  if (tile.type === 'START')  return { icon: '✈️', label: '出發', extra: 'tile-start' };
+  if (tile.type === 'PRISON') return { icon: '😵', label: '困境', extra: 'tile-prison' };
+  if (tile.type === 'CHANCE') return { icon: '🎲', label: '機會', extra: 'tile-chance' };
+  if (tile.type === 'SCHOOL') {
+    if (tile.toiletType !== 'NONE') return { icon: '🏫', label: tile.nameZh || tile.name, extra: 'tile-school tile-upgraded' };
+    return { icon: '🏫', label: tile.nameZh || tile.name, extra: 'tile-school' };
+  }
+  if (tile.toiletType === 'LARGE') return { icon: '🚿', label: tile.nameZh || tile.name, extra: 'tile-upgraded' };
+  if (tile.toiletType === 'SMALL') return { icon: '🚽', label: tile.nameZh || tile.name, extra: 'tile-upgraded' };
   return { icon: '🏚️', label: tile.nameZh || tile.name, extra: 'tile-village' };
 };
 
